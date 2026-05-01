@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AirGoal – $AIRG | FIFA World Cup 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00FF87;
+    --gold: #FFD700;
+    --red: #FF2D55;
+    --bg: #000000;
+    --surface: #0A0A0A;
+    --surface2: #111111;
+    --surface3: #181818;
+    --border: rgba(255,255,255,0.07);
+    --white: #FFFFFF;
+    --offwhite: #E8EDF5;
+    --gray: #666C7A;
+    --gray2: #9AA3B2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--offwhite);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+
+  /* LANG BAR */
+  #lang-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: #000;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 40px;
+    height: 40px;
+    gap: 4px;
+  }
+
+  .lang-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gray);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-right: 12px;
+  }
+
+  .lang-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .lang-btn.active {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+    font-weight: 500;
+  }
+
+  .lang-btn:not(.active):hover {
+    border-color: var(--gray);
+    color: var(--offwhite);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 40px; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 60px;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: 0.1em;
+    color: var(--white);
+  }
+
+  .nav-logo em { color: var(--green); font-style: normal; }
+
+  nav ul {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  nav ul a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+
+  nav ul a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 4px;
+    background: var(--green);
+    color: #000;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .nav-cta:hover {
+    box-shadow: 0 0 24px rgba(0,255,135,0.4);
+    transform: translateY(-1px);
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 40px 80px;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .hero-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 60%, rgba(0,255,135,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 85% 25%, rgba(255,215,0,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 960px;
+  }
+
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(0,255,135,0.25);
+    border-radius: 100px;
+    padding: 5px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--green);
+    margin-bottom: 36px;
+  }
+
+  .pulse-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5.5rem, 16vw, 13rem);
+    line-height: 0.85;
+    letter-spacing: 0.02em;
+    color: var(--white);
+  }
+
+  .hero-title .accent { color: var(--green); }
+  .hero-title .accent2 { color: var(--gold); }
+
+  .hero-ticker {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--gray);
+    margin-top: 8px;
+    letter-spacing: 0.2em;
+  }
+
+  .hero-ticker span { color: var(--green); }
+
+  .hero-desc {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    font-weight: 400;
+    color: var(--gray2);
+    line-height: 1.6;
+    margin: 32px auto;
+    max-width: 560px;
+  }
+
+  .hero-desc strong { color: var(--white); font-weight: 600; }
+
+  .hero-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-g {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border-radius: 5px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-g.primary {
+    background: var(--green);
+    color: #000;
+  }
+
+  .btn-g.primary:hover {
+    box-shadow: 0 0 32px rgba(0,255,135,0.45);
+    transform: translateY(-2px);
+  }
+
+  .btn-g.outline {
+    background: transparent;
+    color: var(--offwhite);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+
+  .btn-g.outline:hover {
+    border-color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 72px;
+    flex-wrap: wrap;
+  }
+
+  .hstat { text-align: center; }
+
+  .hstat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.6rem;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .hstat-lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-top: 5px;
+  }
+
+  /* SECTIONS */
+  .sec {
+    padding: 90px 40px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  .sec-full {
+    padding: 90px 40px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-full .sec-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  .sec-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+
+  .sec-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .sec-desc {
+    font-size: 1rem;
+    color: var(--gray2);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 52px;
+  }
+
+  /* HOW IT WORKS */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .step {
+    background: var(--surface2);
+    padding: 36px 28px;
+    position: relative;
+  }
+
+  .step-n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4.5rem;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+    position: absolute;
+    top: 12px; right: 16px;
+  }
+
+  .step-ico { font-size: 2rem; margin-bottom: 18px; display: block; }
+
+  .step-ttl {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .step-dsc { font-size: 0.9rem; color: var(--gray2); line-height: 1.6; }
+
+  /* MATCHES */
+  .date-filter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .dfbtn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .dfbtn.active, .dfbtn:hover {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+  }
+
+  .matches-day { display: none; }
+  .matches-day.visible { display: block; }
+
+  .day-hd {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    padding: 10px 16px;
+    border-left: 2px solid var(--gold);
+    background: rgba(255,215,0,0.04);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 16px;
+  }
+
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .match-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: default;
+  }
+
+  .mc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .mc-grp {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+
+  .mc-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+
+  .mc-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .mc-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+  }
+
+  .mc-flag { font-size: 1.5rem; }
+
+  .mc-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--offwhite);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .mc-vs {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--gray);
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  .mc-foot {
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    text-align: center;
+  }
+
+  /* GROUPS */
+  .gtable {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 10px;
+  }
+
+  .gbox {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .gbox-hd {
+    padding: 10px 14px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .gbox-teams {
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .gbox-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--offwhite);
+  }
+
+  .gbox-team .fl { font-size: 1.1rem; }
+
+  .hA { background: #27AE60; }
+  .hB { background: #E74C3C; }
+  .hC { background: #E67E22; }
+  .hD { background: #2980B9; }
+  .hE { background: #8E44AD; }
+  .hF { background: #16A085; }
+  .hG { background: #C0392B; }
+  .hH { background: #1ABC9C; }
+  .hI { background: #2471A3; }
+  .hJ { background: #7F8C8D; }
+  .hK { background: #D35400; }
+  .hL { background: #0097A7; }
+
+  /* TOKENOMICS */
+  .toko-wrap {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .toko-donut {
+    position: relative;
+    width: 240px;
+    height: 240px;
+  }
+
+  .toko-donut svg { width: 100%; height: 100%; }
+
+  .toko-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toko-center b {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .toko-center small {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+
+  .toko-rows { display: flex; flex-direction: column; gap: 10px; }
+
+  .toko-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .toko-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .toko-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--offwhite);
+    flex: 1;
+  }
+
+  .toko-pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--white);
+  }
+
+  /* ROADMAP */
+  .rm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .rm-card {
+    background: var(--surface2);
+    padding: 32px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rm-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .rm-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  .rm-desc { font-size: 0.88rem; color: var(--gray2); line-height: 1.65; }
+
+  /* BUY */
+  #buy {
+    padding: 80px 40px;
+    text-align: center;
+    background: #000;
+    border-top: 1px solid var(--border);
+  }
+
+  footer {
+    padding: 24px 40px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--gray2);
+    text-align: center;
+    background: #000;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    #hero { padding: 130px 16px 60px; }
+    .sec, .sec-full { padding: 70px 16px; }
+    #buy { padding: 60px 16px; }
+    #lang-bar { padding: 0 16px; }
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.2; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div id="lang-bar">
+  <span class="lang-label" data-i18n="lang_label">Language</span>
+  <button class="lang-btn active" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="fr">FR</button>
+</div>
+
+<nav>
+  <div class="nav-logo">AIR<em>GOAL</em></div>
+  <ul>
+    <li><a href="#hero" data-i18n="nav_home">Home</a></li>
+    <li><a href="#how" data-i18n="nav_how">How it works</a></li>
+    <li><a href="#matches" data-i18n="nav_matches">Matches</a></li>
+    <li><a href="#groups" data-i18n="nav_groups">Groups</a></li>
+    <li><a href="#tokenomics" data-i18n="nav_tokenomics">Tokenomics</a></li>
+    <li><a href="#roadmap" data-i18n="nav_roadmap">Roadmap</a></li>
+  </ul>
+  <a href="#buy" class="nav-cta" data-i18n="nav_buy">Buy $AIRG</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-chip">
+      <span class="pulse-dot"></span>
+      <span data-i18n="hero_chip">LIVE PREDICTION GAME • WORLD CUP 2026</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="accent" data-i18n="hero_title_1">Predict.</span><br>
+      <span class="accent2" data-i18n="hero_title_2">Play.</span><br>
+      <span data-i18n="hero_title_3">Win.</span>
+    </h1>
+    <div class="hero-ticker" data-i18n="hero_ticker">
+      POWERED BY <span>$AIRG</span> • FIFA WORLD CUP 2026
+    </div>
+    <p class="hero-desc" data-i18n="hero_desc">
+      AirGoal turns every World Cup 2026 match into a live on‑chain prediction game. Pick your side, lock your call, and climb the global leaderboard with $AIRG rewards.
+    </p>
+    <div class="hero-btns">
+      <a href="#matches" class="btn-g primary" data-i18n="hero_cta_primary">Start predicting</a>
+      <a href="#tokenomics" class="btn-g outline" data-i18n="hero_cta_secondary">View tokenomics</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-val">104</div>
+        <div class="hstat-lbl" data-i18n="stat_matches">MATCHES TO PREDICT</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val">12</div>
+        <div class="hstat-lbl" data-i18n="stat_groups">GROUPS TRACKED</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val">$AIRG</div>
+        <div class="hstat-lbl" data-i18n="stat_token">UTILITY TOKEN</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="sec">
+  <div class="sec-tag" data-i18n="how_tag">How it works</div>
+  <h2 class="sec-title" data-i18n="how_title">Simple rules. High stakes.</h2>
+  <p class="sec-desc" data-i18n="how_desc">
+    AirGoal is built for fast, intuitive predictions. No complex DeFi flows, no friction. Just pick, lock, and follow the match.
+  </p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">01</div>
+      <span class="step-ico">🎯</span>
+      <div class="step-ttl" data-i18n="how_step1_title">Choose your match</div>
+      <p class="step-dsc" data-i18n="how_step1_desc">
+        Browse the daily World Cup 2026 schedule and pick any match you want to predict.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <span class="step-ico">⚡</span>
+      <div class="step-ttl" data-i18n="how_step2_title">Lock your prediction</div>
+      <p class="step-dsc" data-i18n="how_step2_desc">
+        Select the team you think will win. Your call is locked before kick‑off.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <span class="step-ico">🏆</span>
+      <div class="step-ttl" data-i18n="how_step3_title">Climb the leaderboard</div>
+      <p class="step-dsc" data-i18n="how_step3_desc">
+        Correct predictions earn points and $AIRG rewards. Track your rank in real time.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="matches" class="sec-full">
+  <div class="sec-inner">
+    <div class="sec-tag" data-i18n="matches_tag">Matches</div>
+    <h2 class="sec-title" data-i18n="matches_title">World Cup 2026 schedule</h2>
+    <p class="sec-desc" data-i18n="matches_desc">
+      Filter by day and explore every group stage match. Tap a card to lock your prediction (coming soon).
+    </p>
+
+    <div class="date-filter" id="date-filter"></div>
+    <div id="matches-container"></div>
+  </div>
+</section>
+
+<section id="groups" class="sec">
+  <div class="sec-tag" data-i18n="groups_tag">Groups</div>
+  <h2 class="sec-title" data-i18n="groups_title">12 groups. Global clash.</h2>
+  <p class="sec-desc" data-i18n="groups_desc">
+    Track every nation across all 12 groups. AirGoal keeps your predictions aligned with the real tournament structure.
+  </p>
+  <div class="gtable">
+    <div class="gbox">
+      <div class="gbox-hd hA">Group A</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇲🇽</span><span>Mexico</span></div>
+        <div class="gbox-team"><span class="fl">🇿🇦</span><span>South Africa</span></div>
+        <div class="gbox-team"><span class="fl">🇰🇷</span><span>South Korea</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇿</span><span>Czech Republic</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hB">Group B</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇨🇦</span><span>Canada</span></div>
+        <div class="gbox-team"><span class="fl">🇧🇦</span><span>Bosnia and Herzegovina</span></div>
+        <div class="gbox-team"><span class="fl">🇶🇦</span><span>Qatar</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇭</span><span>Switzerland</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hC">Group C</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇧🇷</span><span>Brazil</span></div>
+        <div class="gbox-team"><span class="fl">🏴</span><span>Scotland</span></div>
+        <div class="gbox-team"><span class="fl">🇲🇦</span><span>Morocco</span></div>
+        <div class="gbox-team"><span class="fl">🇭🇹</span><span>Haiti</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hD">Group D</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇺🇸</span><span>United States</span></div>
+        <div class="gbox-team"><span class="fl">🇦🇺</span><span>Australia</span></div>
+        <div class="gbox-team"><span class="fl">🇹🇷</span><span>Turkey</span></div>
+        <div class="gbox-team"><span class="fl">🇵🇾</span><span>Paraguay</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hE">Group E</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇩🇪</span><span>Germany</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇮</span><span>Ivory Coast</span></div>
+        <div class="gbox-team"><span class="fl">🇪🇨</span><span>Ecuador</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇼</span><span>Curacao</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hF">Group F</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇯🇵</span><span>Japan</span></div>
+        <div class="gbox-team"><span class="fl">🇳🇱</span><span>Netherlands</span></div>
+        <div class="gbox-team"><span class="fl">🇸🇪</span><span>Sweden</span></div>
+        <div class="gbox-team"><span class="fl">🇹🇳</span><span>Tunisia</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hG">Group G</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇧🇪</span><span>Belgium</span></div>
+        <div class="gbox-team"><span class="fl">🇪🇬</span><span>Egypt</span></div>
+        <div class="gbox-team"><span class="fl">🇮🇷</span><span>Iran</span></div>
+        <div class="gbox-team"><span class="fl">🇳🇿</span><span>New Zealand</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hH">Group H</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇪🇸</span><span>Spain</span></div>
+        <div class="gbox-team"><span class="fl">🇺🇾</span><span>Uruguay</span></div>
+        <div class="gbox-team"><span class="fl">🇸🇦</span><span>Saudi Arabia</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇻</span><span>Cape Verde</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hI">Group I</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇫🇷</span><span>France</span></div>
+        <div class="gbox-team"><span class="fl">🇳🇴</span><span>Norway</span></div>
+        <div class="gbox-team"><span class="fl">🇮🇶</span><span>Iraq</span></div>
+        <div class="gbox-team"><span class="fl">🇸🇳</span><span>Senegal</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hJ">Group J</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇦🇷</span><span>Argentina</span></div>
+        <div class="gbox-team"><span class="fl">🇦🇹</span><span>Austria</span></div>
+        <div class="gbox-team"><span class="fl">🇩🇿</span><span>Algeria</span></div>
+        <div class="gbox-team"><span class="fl">🇯🇴</span><span>Jordan</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hK">Group K</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🇵🇹</span><span>Portugal</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇴</span><span>Colombia</span></div>
+        <div class="gbox-team"><span class="fl">🇺🇿</span><span>Uzbekistan</span></div>
+        <div class="gbox-team"><span class="fl">🇨🇩</span><span>DR Congo</span></div>
+      </div>
+    </div>
+    <div class="gbox">
+      <div class="gbox-hd hL">Group L</div>
+      <div class="gbox-teams">
+        <div class="gbox-team"><span class="fl">🏴</span><span>England</span></div>
+        <div class="gbox-team"><span class="fl">🇬🇭</span><span>Ghana</span></div>
+        <div class="gbox-team"><span class="fl">🇭🇷</span><span>Croatia</span></div>
+        <div class="gbox-team"><span class="fl">🇵🇦</span><span>Panama</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tokenomics" class="sec-full">
+  <div class="sec-inner">
+    <div class="sec-tag" data-i18n="toko_tag">Tokenomics</div>
+    <h2 class="sec-title" data-i18n="toko_title">$AIRG utility & distribution</h2>
+    <p class="sec-desc" data-i18n="toko_desc">
+      $AIRG powers predictions, rewards, and future game modes. A transparent allocation designed for long‑term gameplay and growth.
+    </p>
+    <div class="toko-wrap">
+      <div class="toko-donut">
+        <svg viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#222" stroke-width="3"></circle>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#00FF87" stroke-width="3" stroke-dasharray="40 60" stroke-dashoffset="25"></circle>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#FFD700" stroke-width="3" stroke-dasharray="25 75" stroke-dashoffset="65"></circle>
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#FF2D55" stroke-width="3" stroke-dasharray="20 80" stroke-dashoffset="95"></circle>
+        </svg>
+        <div class="toko-center">
+          <b>$AIRG</b>
+          <small data-i18n="toko_center">Prediction token</small>
+        </div>
+      </div>
+      <div class="toko-rows">
+        <div class="toko-row">
+          <div class="toko-dot" style="background:#00FF87;"></div>
+          <div class="toko-name" data-i18n="toko_row1_name">Community rewards & leaderboard</div>
+          <div class="toko-pct">40%</div>
+        </div>
+        <div class="toko-row">
+          <div class="toko-dot" style="background:#FFD700;"></div>
+          <div class="toko-name" data-i18n="toko_row2_name">Liquidity & CEX/DEX listings</div>
+          <div class="toko-pct">25%</div>
+        </div>
+        <div class="toko-row">
+          <div class="toko-dot" style="background:#FF2D55;"></div>
+          <div class="toko-name" data-i18n="toko_row3_name">Team & long‑term development</div>
+          <div class="toko-pct">20%</div>
+        </div>
+        <div class="toko-row">
+          <div class="toko-dot" style="background:#9AA3B2;"></div>
+          <div class="toko-name" data-i18n="toko_row4_name">Partnerships, marketing & tournaments</div>
+          <div class="toko-pct">15%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" class="sec">
+  <div class="sec-tag" data-i18n="rm_tag">Roadmap</div>
+  <h2 class="sec-title" data-i18n="rm_title">From launch to World Cup finals.</h2>
+  <p class="sec-desc" data-i18n="rm_desc">
+    AirGoal is built to live beyond a single tournament. Here’s how we roll out features and game modes.
+  </p>
+  <div class="rm-grid">
+    <div class="rm-card">
+      <div class="rm-phase" data-i18n="rm_p1_phase">Phase 1 • Q2 2026</div>
+      <div class="rm-title" data-i18n="rm_p1_title">Core launch & group stage</div>
+      <p class="rm-desc" data-i18n="rm_p1_desc">
+        Launch of $AIRG, prediction engine, group stage schedule, and global leaderboard. First community tournaments and rewards.
+      </p>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase" data-i18n="rm_p2_phase">Phase 2 • Q3 2026</div>
+      <div class="rm-title" data-i18n="rm_p2_title">Knockout modes & live events</div>
+      <p class="rm-desc" data-i18n="rm_p2_desc">
+        Support for knockout rounds, combo predictions, and live watch‑party integrations with partners and creators.
+      </p>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase" data-i18n="rm_p3_phase">Phase 3 • Post‑World Cup</div>
+      <div class="rm-title" data-i18n="rm_p3_title">Leagues, clubs & new sports</div>
+      <p class="rm-desc" data-i18n="rm_p3_desc">
+        Expansion to major leagues and other sports, with $AIRG as the core prediction and reward layer.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="buy">
+  <h2 class="sec-title" data-i18n="buy_title">Get $AIRG before kick‑off.</h2>
+  <p class="sec-desc" style="margin: 0 auto 32px; max-width: 520px;" data-i18n="buy_desc">
+    Secure your $AIRG now to join the first wave of World Cup 2026 predictions. More volume, more rewards, more visibility on the leaderboard.
+  </p>
+  <a href="#" class="btn-g primary" data-i18n="buy_cta">Buy $AIRG (coming soon)</a>
+</section>
+
+<footer>
+  <span data-i18n="footer_text">AirGoal is an independent prediction experience inspired by the FIFA World Cup 2026. Not affiliated with FIFA.</span>
+</footer>
+
+<script>
+  // MATCHES DATA (exact JSON we built)
+  const matches = {
+    "matches": [
+      {"date":"2026-06-11","group":"A","time":"21:00","team1":"Mexico","team2":"Czech Republic"},
+      {"date":"2026-06-11","group":"A","time":"21:00","team1":"South Korea","team2":"South Africa"},
+
+      {"date":"2026-06-12","group":"B","time":"00:00","team1":"Canada","team2":"Bosnia and Herzegovina"},
+      {"date":"2026-06-12","group":"B","time":"03:00","team1":"Qatar","team2":"Switzerland"},
+      {"date":"2026-06-12","group":"C","time":"18:00","team1":"Brazil","team2":"Scotland"},
+      {"date":"2026-06-12","group":"C","time":"21:00","team1":"Morocco","team2":"Haiti"},
+
+      {"date":"2026-06-13","group":"D","time":"00:00","team1":"Turkey","team2":"United States"},
+      {"date":"2026-06-13","group":"D","time":"03:00","team1":"Australia","team2":"Paraguay"},
+      {"date":"2026-06-13","group":"E","time":"18:00","team1":"Germany","team2":"Curacao"},
+      {"date":"2026-06-13","group":"E","time":"21:00","team1":"Ivory Coast","team2":"Ecuador"},
+
+      {"date":"2026-06-14","group":"F","time":"00:00","team1":"Japan","team2":"Netherlands"},
+      {"date":"2026-06-14","group":"F","time":"03:00","team1":"Sweden","team2":"Tunisia"},
+      {"date":"2026-06-14","group":"G","time":"18:00","team1":"Belgium","team2":"Egypt"},
+      {"date":"2026-06-14","group":"G","time":"21:00","team1":"Iran","team2":"New Zealand"},
+
+      {"date":"2026-06-15","group":"H","time":"00:00","team1":"Spain","team2":"Uruguay"},
+      {"date":"2026-06-15","group":"H","time":"03:00","team1":"Saudi Arabia","team2":"Cape Verde"},
+      {"date":"2026-06-15","group":"I","time":"18:00","team1":"France","team2":"Norway"},
+      {"date":"2026-06-15","group":"I","time":"21:00","team1":"Iraq","team2":"Senegal"},
+
+      {"date":"2026-06-16","group":"J","time":"00:00","team1":"Argentina","team2":"Jordan"},
+      {"date":"2026-06-16","group":"J","time":"03:00","team1":"Austria","team2":"Algeria"},
+      {"date":"2026-06-16","group":"K","time":"18:00","team1":"Portugal","team2":"Colombia"},
+      {"date":"2026-06-16","group":"K","time":"21:00","team1":"Uzbekistan","team2":"DR Congo"},
+
+      {"date":"2026-06-17","group":"L","time":"00:00","team1":"England","team2":"Panama"},
+      {"date":"2026-06-17","group":"L","time":"03:00","team1":"Ghana","team2":"Croatia"},
+      {"date":"2026-06-17","group":"A","time":"18:00","team1":"South Korea","team2":"Czech Republic"},
+      {"date":"2026-06-17","group":"A","time":"21:00","team1":"South Africa","team2":"Mexico"},
+
+      {"date":"2026-06-18","group":"B","time":"00:00","team1":"Bosnia and Herzegovina","team2":"Switzerland"},
+      {"date":"2026-06-18","group":"B","time":"03:00","team1":"Qatar","team2":"Canada"},
+      {"date":"2026-06-18","group":"C","time":"18:00","team1":"Scotland","team2":"Haiti"},
+      {"date":"2026-06-18","group":"C","time":"21:00","team1":"Morocco","team2":"Brazil"},
+
+      {"date":"2026-06-19","group":"D","time":"00:00","team1":"United States","team2":"Paraguay"},
+      {"date":"2026-06-19","group":"D","time":"03:00","team1":"Australia","team2":"Turkey"},
+      {"date":"2026-06-19","group":"E","time":"18:00","team1":"Germany","team2":"Ivory Coast"},
+      {"date":"2026-06-19","group":"E","time":"21:00","team1":"Ecuador","team2":"Curacao"},
+
+      {"date":"2026-06-20","group":"F","time":"00:00","team1":"Netherlands","team2":"Tunisia"},
+      {"date":"2026-06-20","group":"F","time":"03:00","team1":"Sweden","team2":"Japan"},
+      {"date":"2026-06-20","group":"G","time":"18:00","team1":"Belgium","team2":"Iran"},
+      {"date":"2026-06-20","group":"G","time":"21:00","team1":"Egypt","team2":"New Zealand"},
+
+      {"date":"2026-06-21","group":"H","time":"00:00","team1":"Spain","team2":"Cape Verde"},
+      {"date":"2026-06-21","group":"H","time":"03:00","team1":"Uruguay","team2":"Saudi Arabia"},
+      {"date":"2026-06-21","group":"I","time":"18:00","team1":"France","team2":"Iraq"},
+      {"date":"2026-06-21","group":"I","time":"21:00","team1":"Senegal","team2":"Norway"},
+
+      {"date":"2026-06-22","group":"J","time":"00:00","team1":"Argentina","team2":"Austria"},
+      {"date":"2026-06-22","group":"J","time":"03:00","team1":"Algeria","team2":"Jordan"},
+      {"date":"2026-06-22","group":"K","time":"18:00","team1":"Portugal","team2":"Uzbekistan"},
+      {"date":"2026-06-22","group":"K","time":"21:00","team1":"Colombia","team2":"DR Congo"},
+
+      {"date":"2026-06-23","group":"L","time":"00:00","team1":"England","team2":"Ghana"},
+      {"date":"2026-06-23","group":"L","time":"03:00","team1":"Croatia","team2":"Panama"},
+      {"date":"2026-06-23","group":"A","time":"18:00","team1":"Mexico","team2":"Czech Republic"},
+      {"date":"2026-06-23","group":"A","time":"21:00","team1":"South Africa","team2":"South Korea"},
+
+      {"date":"2026-06-24","group":"B","time":"00:00","team1":"Canada","team2":"Switzerland"},
+      {"date":"2026-06-24","group":"B","time":"03:00","team1":"Qatar","team2":"Bosnia and Herzegovina"},
+      {"date":"2026-06-24","group":"C","time":"18:00","team1":"Brazil","team2":"Haiti"},
+      {"date":"2026-06-24","group":"C","time":"21:00","team1":"Morocco","team2":"Scotland"},
+
+      {"date":"2026-06-25","group":"D","time":"00:00","team1":"United States","team2":"Australia"},
+      {"date":"2026-06-25","group":"D","time":"03:00","team1":"Turkey","team2":"Paraguay"},
+      {"date":"2026-06-25","group":"E","time":"18:00","team1":"Germany","team2":"Ecuador"},
+      {"date":"2026-06-25","group":"E","time":"21:00","team1":"Ivory Coast","team2":"Curacao"},
+
+      {"date":"2026-06-26","group":"F","time":"00:00","team1":"Japan","team2":"Tunisia"},
+      {"date":"2026-06-26","group":"F","time":"03:00","team1":"Netherlands","team2":"Sweden"},
+      {"date":"2026-06-26","group":"G","time":"18:00","team1":"Belgium","team2":"New Zealand"},
+      {"date":"2026-06-26","group":"G","time":"21:00","team1":"Egypt","team2":"Iran"},
+
+      {"date":"2026-06-27","group":"H","time":"00:00","team1":"Spain","team2":"Saudi Arabia"},
+      {"date":"2026-06-27","group":"H","time":"03:00","team1":"Uruguay","team2":"Cape Verde"},
+      {"date":"2026-06-27","group":"I","time":"18:00","team1":"France","team2":"Senegal"},
+      {"date":"2026-06-27","group":"I","time":"21:00","team1":"Norway","team2":"Iraq"}
+    ]
+  };
+
+  // RENDER MATCHES
+  function renderMatches() {
+    const container = document.getElementById('matches-container');
+    const filter = document.getElementById('date-filter');
+    container.innerHTML = '';
+    filter.innerHTML = '';
+
+    const byDate = {};
+    matches.matches.forEach(m => {
+      if (!byDate[m.date]) byDate[m.date] = [];
+      byDate[m.date].push(m);
+    });
+
+    const dates = Object.keys(byDate).sort();
+    dates.forEach((date, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'dfbtn' + (idx === 0 ? ' active' : '');
+      btn.textContent = date;
+      btn.dataset.date = date;
+      filter.appendChild(btn);
+
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'matches-day' + (idx === 0 ? ' visible' : '');
+      dayDiv.dataset.date = date;
+
+      const hd = document.createElement('div');
+      hd.className = 'day-hd';
+      hd.textContent = date;
+      dayDiv.appendChild(hd);
+
+      const grid = document.createElement('div');
+      grid.className = 'day-grid';
+
+      byDate[date].forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'match-card';
+
+        const top = document.createElement('div');
+        top.className = 'mc-top';
+
+        const grp = document.createElement('div');
+        grp.className = 'mc-grp';
+        grp.textContent = 'Group ' + m.group;
+
+        const time = document.createElement('div');
+        time.className = 'mc-time';
+        time.textContent = m.time;
+
+        top.appendChild(grp);
+        top.appendChild(time);
+
+        const teams = document.createElement('div');
+        teams.className = 'mc-teams';
+
+        const t1 = document.createElement('div');
+        t1.className = 'mc-team';
+        const t1Name = document.createElement('div');
+        t1Name.className = 'mc-name';
+        t1Name.textContent = m.team1;
+        t1.appendChild(t1Name);
+
+        const vs = document.createElement('div');
+        vs.className = 'mc-vs';
+        vs.textContent = 'VS';
+
+        const t2 = document.createElement('div');
+        t2.className = 'mc-team';
+        const t2Name = document.createElement('div');
+        t2Name.className = 'mc-name';
+        t2Name.textContent = m.team2;
+        t2.appendChild(t2Name);
+
+        teams.appendChild(t1);
+        teams.appendChild(vs);
+        teams.appendChild(t2);
+
+        const foot = document.createElement('div');
+        foot.className = 'mc-foot';
+        foot.textContent = 'Prediction module coming soon';
+
+        card.appendChild(top);
+        card.appendChild(teams);
+        card.appendChild(foot);
+
+        grid.appendChild(card);
+      });
+
+      dayDiv.appendChild(grid);
+      container.appendChild(dayDiv);
+    });
+
+    filter.addEventListener('click', e => {
+      if (!e.target.classList.contains('dfbtn')) return;
+      const d = e.target.dataset.date;
+      document.querySelectorAll('.dfbtn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      document.querySelectorAll('.matches-day').forEach(day => {
+        day.classList.toggle('visible', day.dataset.date === d);
+      });
+    });
+  }
+
+  // TRANSLATIONS
+  const translations = {
+    en: {
+      lang_label: "Language",
+      nav_home: "Home",
+      nav_how: "How it works",
+      nav_matches: "Matches",
+      nav_groups: "Groups",
+      nav_tokenomics: "Tokenomics",
+      nav_roadmap: "Roadmap",
+      nav_buy: "Buy $AIRG",
+      hero_chip: "LIVE PREDICTION GAME • WORLD CUP 2026",
+      hero_title_1: "Predict.",
+      hero_title_2: "Play.",
+      hero_title_3: "Win.",
+      hero_ticker: "POWERED BY $AIRG • FIFA WORLD CUP 2026",
+      hero_desc: "AirGoal turns every World Cup 2026 match into a live on‑chain prediction game. Pick your side, lock your call, and climb the global leaderboard with $AIRG rewards.",
+      hero_cta_primary: "Start predicting",
+      hero_cta_secondary: "View tokenomics",
+      stat_matches: "MATCHES TO PREDICT",
+      stat_groups: "GROUPS TRACKED",
+      stat_token: "UTILITY TOKEN",
+      how_tag: "How it works",
+      how_title: "Simple rules. High stakes.",
+      how_desc: "AirGoal is built for fast, intuitive predictions. No complex DeFi flows, no friction. Just pick, lock, and follow the match.",
+      how_step1_title: "Choose your match",
+      how_step1_desc: "Browse the daily World Cup 2026 schedule and pick any match you want to predict.",
+      how_step2_title: "Lock your prediction",
+      how_step2_desc: "Select the team you think will win. Your call is locked before kick‑off.",
+      how_step3_title: "Climb the leaderboard",
+      how_step3_desc: "Correct predictions earn points and $AIRG rewards. Track your rank in real time.",
+      matches_tag: "Matches",
+      matches_title: "World Cup 2026 schedule",
+      matches_desc: "Filter by day and explore every group stage match. Tap a card to lock your prediction (coming soon).",
+      groups_tag: "Groups",
+      groups_title: "12 groups. Global clash.",
+      groups_desc: "Track every nation across all 12 groups. AirGoal keeps your predictions aligned with the real tournament structure.",
+      toko_tag: "Tokenomics",
+      toko_title: "$AIRG utility & distribution",
+      toko_desc: "$AIRG powers predictions, rewards, and future game modes. A transparent allocation designed for long‑term gameplay and growth.",
+      toko_center: "Prediction token",
+      toko_row1_name: "Community rewards & leaderboard",
+      toko_row2_name: "Liquidity & CEX/DEX listings",
+      toko_row3_name: "Team & long‑term development",
+      toko_row4_name: "Partnerships, marketing & tournaments",
+      rm_tag: "Roadmap",
+      rm_title: "From launch to World Cup finals.",
+      rm_desc: "AirGoal is built to live beyond a single tournament. Here’s how we roll out features and game modes.",
+      rm_p1_phase: "Phase 1 • Q2 2026",
+      rm_p1_title: "Core launch & group stage",
+      rm_p1_desc: "Launch of $AIRG, prediction engine, group stage schedule, and global leaderboard. First community tournaments and rewards.",
+      rm_p2_phase: "Phase 2 • Q3 2026",
+      rm_p2_title: "Knockout modes & live events",
+      rm_p2_desc: "Support for knockout rounds, combo predictions, and live watch‑party integrations with partners and creators.",
+      rm_p3_phase: "Phase 3 • Post‑World Cup",
+      rm_p3_title: "Leagues, clubs & new sports",
+      rm_p3_desc: "Expansion to major leagues and other sports, with $AIRG as the core prediction and reward layer.",
+      buy_title: "Get $AIRG before kick‑off.",
+      buy_desc: "Secure your $AIRG now to join the first wave of World Cup 2026 predictions. More volume, more rewards, more visibility on the leaderboard.",
+      buy_cta: "Buy $AIRG (coming soon)",
+      footer_text: "AirGoal is an independent prediction experience inspired by the FIFA World Cup 2026. Not affiliated with FIFA."
+    },
+    fr: {
+      lang_label: "Langue",
+      nav_home: "Accueil",
+      nav_how: "Comment ça marche",
+      nav_matches: "Matchs",
+      nav_groups: "Groupes",
+      nav_tokenomics: "Tokenomics",
+      nav_roadmap: "Feuille de route",
+      nav_buy: "Acheter $AIRG",
+      hero_chip: "JEU DE PRÉDICTION EN DIRECT • COUPE DU MONDE 2026",
+      hero_title_1: "Prédire.",
+      hero_title_2: "Jouer.",
+      hero_title_3: "Gagner.",
+      hero_ticker: "PROPULSÉ PAR $AIRG • COUPE DU MONDE 2026",
+      hero_desc: "AirGoal transforme chaque match de la Coupe du Monde 2026 en jeu de prédiction on‑chain. Choisis ton camp, verrouille ton pronostic et grimpe le classement mondial avec des récompenses en $AIRG.",
+      hero_cta_primary: "Commencer à prédire",
+      hero_cta_secondary: "Voir les tokenomics",
+      stat_matches: "MATCHS À PRÉDIRE",
+      stat_groups: "GROUPES SUIVIS",
+      stat_token: "TOKEN UTILITAIRE",
+      how_tag: "Comment ça marche",
+      how_title: "Règles simples. Enjeu maximum.",
+      how_desc: "AirGoal est conçu pour des prédictions rapides et intuitives. Pas de DeFi compliquée, pas de friction. Tu choisis, tu verrouilles, tu suis le match.",
+      how_step1_title: "Choisis ton match",
+      how_step1_desc: "Parcours le calendrier quotidien de la Coupe du Monde 2026 et sélectionne le match que tu veux prédire.",
+      how_step2_title: "Verrouille ton pronostic",
+      how_step2_desc: "Sélectionne l’équipe qui, selon toi, va gagner. Ton choix est verrouillé avant le coup d’envoi.",
+      how_step3_title: "Grimpe au classement",
+      how_step3_desc: "Les bons pronostics te font gagner des points et des $AIRG. Suis ton rang en temps réel.",
+      matches_tag: "Matchs",
+      matches_title: "Calendrier Coupe du Monde 2026",
+      matches_desc: "Filtre par jour et explore tous les matchs de groupes. Clique sur une carte pour verrouiller ton pronostic (bientôt).",
+      groups_tag: "Groupes",
+      groups_title: "12 groupes. Choc mondial.",
+      groups_desc: "Suis chaque nation dans les 12 groupes. AirGoal garde tes pronostics alignés avec la structure réelle du tournoi.",
+      toko_tag: "Tokenomics",
+      toko_title: "Utilité & distribution de $AIRG",
+      toko_desc: "$AIRG alimente les prédictions, les récompenses et les futurs modes de jeu. Une allocation transparente pensée pour le long terme.",
+      toko_center: "Token de prédiction",
+      toko_row1_name: "Récompenses & classement communauté",
+      toko_row2_name: "Liquidité & listings CEX/DEX",
+      toko_row3_name: "Équipe & développement long terme",
+      toko_row4_name: "Partenariats, marketing & tournois",
+      rm_tag: "Feuille de route",
+      rm_title: "Du lancement à la finale.",
+      rm_desc: "AirGoal est conçu pour vivre au‑delà d’un seul tournoi. Voici comment les fonctionnalités et modes de jeu arrivent.",
+      rm_p1_phase: "Phase 1 • T2 2026",
+      rm_p1_title: "Lancement & phase de groupes",
+      rm_p1_desc: "Lancement de $AIRG, moteur de prédiction, calendrier de groupes et classement mondial. Premiers tournois communautaires.",
+      rm_p2_phase: "Phase 2 • T3 2026",
+      rm_p2_title: "Phases finales & événements live",
+      rm_p2_desc: "Support des phases à élimination directe, pronostics combinés et intégrations avec des watch‑parties et créateurs.",
+      rm_p3_phase: "Phase 3 • Post‑Coupe du Monde",
+      rm_p3_title: "Ligues, clubs & nouveaux sports",
+      rm_p3_desc: "Extension aux grandes ligues et autres sports, avec $AIRG comme couche centrale de prédiction et de récompense.",
+      buy_title: "Obtiens $AIRG avant le coup d’envoi.",
+      buy_desc: "Sécurise tes $AIRG maintenant pour rejoindre la première vague de pronostics Coupe du Monde 2026. Plus de volume, plus de récompenses, plus de visibilité au classement.",
+      buy_cta: "Acheter $AIRG (bientôt)",
+      footer_text: "AirGoal est une expérience de prédiction indépendante inspirée de la Coupe du Monde 2026. Non affiliée à la FIFA."
+    }
+  };
+
+  function applyLanguage(lang) {
+    const dict = translations[lang] || translations.en;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) el.textContent = dict[key];
+    });
+    document.documentElement.lang = lang;
+    localStorage.setItem('airgoal_lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderMatches();
+    const saved = localStorage.getItem('airgoal_lang') || 'en';
+    applyLanguage(saved);
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyLanguage(btn.dataset.lang);
+      });
+    });
+  });
+</script>
+</body>
+</html>
