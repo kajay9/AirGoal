@@ -223,7 +223,7 @@ let isPremium = false;
 let currentGroup = 'A';
 let allMatches = [];
 let userPredictions = {};
-let currentLang = 'en';
+let currentLang = localStorage.getItem('lang') || 'en';
 
 // LANG
 function changeLang(lang) {
@@ -236,7 +236,7 @@ function changeLang(lang) {
       el.style.display = 'none';
     }
   });
-  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  localStorage.setItem('lang', lang); document.getElementById('btnEn').classList.toggle('active', lang === 'en');
   document.getElementById('btnFr').classList.toggle('active', lang === 'fr');
   if (allMatches.length) renderMatches(currentGroup);
 }
