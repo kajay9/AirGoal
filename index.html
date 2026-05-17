@@ -801,7 +801,204 @@ footer{background:var(--black);border-top:1px solid var(--border);padding:64px 6
 </div>
 
 <!-- MATCHES -->
-<div class="matches-section" id="matches">
+<div class="matches-section" id="matches"
+><!-- SECTION IA PROMO -->
+<section class="ai-promo-section reveal" id="ai">
+  <div class="ai-promo-inner">
+    <div class="ai-promo-left">
+      <div class="section-tag en">AI Oracle</div>
+      <div class="section-tag fr" style="display:none">Oracle IA</div>
+      <h2 class="section-title">
+        <span class="en">THE AI THAT <em>PREDICTS</em> MATCHES.</span>
+        <span class="fr" style="display:none">L'IA QUI <em>PRÉDIT</em> LES MATCHS.</span>
+      </h2>
+      <p class="ai-promo-desc en">Before each match, our AI analyzes team form, head-to-head stats, injuries and tactics to generate a prediction with confidence score. Exclusive to AirGoal+ holders.</p>
+      <p class="ai-promo-desc fr" style="display:none">Avant chaque match, notre IA analyse la forme des équipes, les confrontations directes, les blessés et les tactiques pour générer un prono avec score de confiance. Exclusif AirGoal+.</p>
+      <div class="ai-promo-features">
+        <div class="ai-promo-feature">
+          <span class="ai-feature-icon">⚽</span>
+          <span class="en">1X2 Result + Exact Score</span>
+          <span class="fr" style="display:none">Résultat 1X2 + Score Exact</span>
+        </div>
+        <div class="ai-promo-feature">
+          <span class="ai-feature-icon">👤</span>
+          <span class="en">Probable Goalscorer</span>
+          <span class="fr" style="display:none">Buteur Probable</span>
+        </div>
+        <div class="ai-promo-feature">
+          <span class="ai-feature-icon">📊</span>
+          <span class="en">Confidence % + Tactical Analysis</span>
+          <span class="fr" style="display:none">% Confiance + Analyse Tactique</span>
+        </div>
+        <div class="ai-promo-feature">
+          <span class="ai-feature-icon">✨</span>
+          <span class="en">AirGoal+ exclusive · Hold $10 in $AIRGL</span>
+          <span class="fr" style="display:none">Exclusif AirGoal+ · Détenez 10$ en $AIRGL</span>
+        </div>
+      </div>
+      <a href="/predictions" class="btn-primary en">Try the AI Oracle →</a>
+      <a href="/predictions" class="btn-primary fr" style="display:none">Essayer l'Oracle IA →</a>
+    </div>
+    <div class="ai-promo-right">
+      <div class="ai-promo-card">
+        <div class="ai-promo-card-header">
+          <span class="ai-promo-badge en">✨ AI Prediction</span>
+          <span class="ai-promo-badge fr" style="display:none">✨ Prono IA</span>
+          <span class="ai-promo-conf">87% <span class="en">confidence</span><span class="fr" style="display:none">confiance</span></span>
+        </div>
+        <div class="ai-promo-match">
+          <div class="ai-promo-team">
+            <span style="font-size:32px">🇫🇷</span>
+            <span>France</span>
+          </div>
+          <div class="ai-promo-score">2 - 1</div>
+          <div class="ai-promo-team">
+            <span style="font-size:32px">🇸🇳</span>
+            <span>Senegal</span>
+          </div>
+        </div>
+        <div class="ai-promo-stats">
+          <div class="ai-promo-stat">
+            <span class="en">Scorer</span><span class="fr" style="display:none">Buteur</span>
+            <strong>Mbappé</strong>
+          </div>
+          <div class="ai-promo-stat">
+            <span class="en">Result</span><span class="fr" style="display:none">Résultat</span>
+            <strong class="ai-promo-win en">France Win</strong>
+            <strong class="ai-promo-win fr" style="display:none">Victoire France</strong>
+          </div>
+        </div>
+        <div class="ai-promo-analysis">
+          <span class="en">France dominates in possession and set pieces. Senegal's defense is solid but Mbappé's pace creates constant danger.</span>
+          <span class="fr" style="display:none">La France domine la possession et les coups de pied arrêtés. La défense du Sénégal est solide mais la vitesse de Mbappé crée un danger constant.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.ai-promo-section {
+  padding: 80px 20px;
+  background: var(--black);
+  border-top: 1px solid var(--border);
+}
+.ai-promo-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.ai-promo-desc {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.ai-promo-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+.ai-promo-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--white);
+}
+.ai-feature-icon {
+  font-size: 16px;
+  width: 28px;
+  text-align: center;
+}
+.ai-promo-card {
+  background: var(--dark);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.ai-promo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+}
+.ai-promo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.ai-promo-badge {
+  background: rgba(0,168,255,0.1);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--green-border);
+}
+.ai-promo-conf {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4ade80;
+}
+.ai-promo-match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.ai-promo-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.ai-promo-score {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--green);
+}
+.ai-promo-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.ai-promo-stat {
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ai-promo-stat strong { color: var(--white); font-size: 13px; }
+.ai-promo-win { color: var(--green) !important; }
+.ai-promo-analysis {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-style: italic;
+}
+@media (max-width: 768px) {
+  .ai-promo-inner { grid-template-columns: 1fr; }
+}
+</style>
   <div class="matches-inner">
     <div class="section-tag en reveal">FIFA World Cup 2026</div>
     <div class="section-tag fr reveal" style="display:none">Coupe du Monde FIFA 2026</div>
@@ -2118,319 +2315,7 @@ function toggleAiPick(el){
   if(counter){ counter.textContent = count + '/3'; counter.style.color = count>0 ? 'var(--green)' : 'var(--muted)'; }
 }
 </script>
-<!-- SECTION IA -->
-<section class="ai-section" id="ai">
-  <div class="ai-container">
-    <div class="ai-header">
-      <span class="ai-badge">
-        <span class="en">✨ Powered by AI</span>
-        <span class="fr">✨ Propulsé par l'IA</span>
-      </span>
-      <h2 class="ai-title">AIRGOAL <span>AI</span> ORACLE</h2>
-      <p class="ai-sub">
-        <span class="en">AirGoal+ holders only · AI tactical analysis generated live before each match</span>
-        <span class="fr">Réservé aux holders AirGoal+ · Analyse tactique générée en direct avant chaque match</span>
-      </p>
-    </div>
-
-    <div class="ai-match-grid">
-      <div class="ai-match-card" data-id="0" onclick="aiSelectMatch(0)">
-        <div class="ai-match-flags">🇲🇽 vs 🇿🇦</div>
-        <div class="ai-match-teams">Mexico vs South Africa</div>
-        <div class="ai-match-date en">Group A · June 11 · Opening Match</div>
-        <div class="ai-match-date fr">Groupe A · 11 juin · Match d'ouverture</div>
-      </div>
-      <div class="ai-match-card" data-id="1" onclick="aiSelectMatch(1)">
-        <div class="ai-match-flags">🇫🇷 vs 🇸🇳</div>
-        <div class="ai-match-teams">France vs Senegal</div>
-        <div class="ai-match-date en">Group I · June 16</div>
-        <div class="ai-match-date fr">Groupe I · 16 juin</div>
-      </div>
-      <div class="ai-match-card" data-id="2" onclick="aiSelectMatch(2)">
-        <div class="ai-match-flags">🇦🇷 vs 🇩🇿</div>
-        <div class="ai-match-teams">Argentina vs Algeria</div>
-        <div class="ai-match-date en">Group J · June 17</div>
-        <div class="ai-match-date fr">Groupe J · 17 juin</div>
-      </div>
-      <div class="ai-match-card" data-id="3" onclick="aiSelectMatch(3)">
-        <div class="ai-match-flags">🇧🇷 vs 🇲🇦</div>
-        <div class="ai-match-teams">Brazil vs Morocco</div>
-        <div class="ai-match-date en">Group C · June 14</div>
-        <div class="ai-match-date fr">Groupe C · 14 juin</div>
-      </div>
-      <div class="ai-match-card" data-id="4" onclick="aiSelectMatch(4)">
-        <div class="ai-match-flags">🏴󠁧󠁢󠁥󠁮󠁧󠁿 vs 🇭🇷</div>
-        <div class="ai-match-teams">England vs Croatia</div>
-        <div class="ai-match-date en">Group L · June 17</div>
-        <div class="ai-match-date fr">Groupe L · 17 juin</div>
-      </div>
-      <div class="ai-match-card" data-id="5" onclick="aiSelectMatch(5)">
-        <div class="ai-match-flags">🇵🇹 vs 🇨🇩</div>
-        <div class="ai-match-teams">Portugal vs DR Congo</div>
-        <div class="ai-match-date en">Group K · June 17</div>
-        <div class="ai-match-date fr">Groupe K · 17 juin</div>
-      </div>
-    </div>
-
-    <button class="ai-btn" id="aiBtnOracle" onclick="aiGenerateProno()" disabled>
-      <span class="en">Select a match to start</span>
-      <span class="fr">Sélectionne un match pour commencer</span>
-    </button>
-
-    <div id="aiResultArea"></div>
-
-    <p class="ai-disclaimer">
-      <span class="en">⚠️ AI Demo · Predictions generated for entertainment purposes only</span>
-      <span class="fr">⚠️ Démo IA · Pronostics générés à titre de divertissement uniquement</span>
-    </p>
-  </div>
-</section>
-
-<style>
-.ai-section {
-  padding: 80px 20px;
-  background: #030712;
-  border-top: 1px solid #0f172a;
-}
-.ai-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-.ai-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-.ai-badge {
-  display: inline-block;
-  border: 1px solid var(--green);
-  color: var(--green);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 14px;
-  border-radius: 999px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-.ai-title {
-  font-size: clamp(28px, 5vw, 48px);
-  font-weight: 900;
-  color: #ffffff;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-.ai-title span { color: var(--green); }
-.ai-sub {
-  font-size: 14px;
-  color: #64748b;
-}
-.ai-match-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 1.5rem;
-}
-.ai-match-card {
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 16px;
-  cursor: pointer;
-  transition: border-color 0.15s;
-  text-align: center;
-}
-.ai-match-card:hover { border-color: var(--green); }
-.ai-match-card.selected { border: 2px solid var(--green); background: #0c1a2e; }
-.ai-match-flags { font-size: 22px; margin-bottom: 6px; }
-.ai-match-teams { font-size: 13px; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
-.ai-match-date { font-size: 11px; color: #64748b; }
-.ai-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--green);
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #030712;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.ai-btn:hover { opacity: 0.88; }
-.ai-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.ai-result {
-  background: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-}
-.ai-result-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #1e293b;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.ai-result-match { font-size: 15px; font-weight: 700; color: #ffffff; }
-.ai-conf {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 999px;
-}
-.ai-conf.high { background: #052e16; color: #4ade80; }
-.ai-conf.mid { background: #1c1008; color: #fbbf24; }
-.ai-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 1rem;
-}
-.ai-metric {
-  background: #1e293b;
-  border-radius: 8px;
-  padding: 12px;
-  text-align: center;
-}
-.ai-metric-label {
-  font-size: 10px;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 4px;
-}
-.ai-metric-val {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
-}
-.ai-metric-val.green { color: var(--green); }
-.ai-analysis {
-  background: #1e293b;
-  border-radius: 8px;
-  padding: 14px;
-}
-.ai-analysis-label {
-  font-size: 10px;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
-}
-.ai-analysis-text { font-size: 13px; color: #cbd5e1; line-height: 1.6; }
-.ai-loading { display: inline-flex; gap: 4px; }
-.ai-loading span {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #030712;
-  animation: aidot 1.2s infinite;
-}
-.ai-loading span:nth-child(2) { animation-delay: 0.2s; }
-.ai-loading span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes aidot { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
-.ai-disclaimer {
-  font-size: 11px;
-  color: #334155;
-  text-align: center;
-  margin-top: 1.5rem;
-}
-</style>
-
-<script>
-const aiMatches = [
-  { label: "Mexico vs South Africa", teams: ["Mexico","South Africa"] },
-  { label: "France vs Senegal", teams: ["France","Senegal"] },
-  { label: "Argentina vs Algeria", teams: ["Argentina","Algeria"] },
-  { label: "Brazil vs Morocco", teams: ["Brazil","Morocco"] },
-  { label: "England vs Croatia", teams: ["England","Croatia"] },
-  { label: "Portugal vs DR Congo", teams: ["Portugal","DR Congo"] },
-];
-let aiSelectedMatch = null;
-let aiCurrentLang = document.documentElement.lang || 'en';
-
-function aiSelectMatch(id) {
-  aiSelectedMatch = id;
-  document.querySelectorAll('.ai-match-card').forEach(c => c.classList.remove('selected'));
-  document.querySelector(`[data-id="${id}"]`).classList.add('selected');
-  const btn = document.getElementById('aiBtnOracle');
-  const lang = document.documentElement.lang || 'en';
-  btn.innerHTML = lang === 'fr'
-    ? `Générer le prono IA — ${aiMatches[id].teams[0]} vs ${aiMatches[id].teams[1]}`
-    : `Generate AI prediction — ${aiMatches[id].teams[0]} vs ${aiMatches[id].teams[1]}`;
-  btn.disabled = false;
-  document.getElementById('aiResultArea').innerHTML = '';
-}
-
-async function aiGenerateProno() {
-  if (aiSelectedMatch === null) return;
-  const match = aiMatches[aiSelectedMatch];
-  const lang = document.documentElement.lang || 'en';
-  const btn = document.getElementById('aiBtnOracle');
-  btn.disabled = true;
-  btn.innerHTML = `<div class="ai-loading"><span></span><span></span><span></span></div>&nbsp;${lang === 'fr' ? 'Analyse en cours...' : 'Analyzing...'}`;
-
-  const prompt = lang === 'fr'
-    ? `Tu es un expert en pronostics football. Analyse le match ${match.teams[0]} vs ${match.teams[1]} à la Coupe du Monde FIFA 2026. Réponds UNIQUEMENT en JSON valide sans texte avant ni après ni balises markdown : {"resultat":"Victoire ${match.teams[0]}" ou "Victoire ${match.teams[1]}" ou "Match nul","score":"X-X","buteur":"Prénom Nom (équipe)","confiance":55 à 89,"analyse":"2-3 phrases d analyse tactique concise en français"}`
-    : `You are a football prediction expert. Analyze the match ${match.teams[0]} vs ${match.teams[1]} at the FIFA World Cup 2026. Respond ONLY in valid JSON without any text before or after, no markdown: {"result":"${match.teams[0]} win" or "${match.teams[1]} win" or "Draw","score":"X-X","scorer":"First Last (team)","confidence":55 to 89,"analysis":"2-3 sentences of concise tactical analysis in English"}`;
-
-  try {
-    const res = await fetch('https://air-goal.vercel.app/api/oracle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, lang })
-    });
-    const data = await res.json();
-    const clean = data.result.replace(/```json|```/g, '').trim();
-    const prono = JSON.parse(clean);
-    aiShowResult(match.label, prono, lang);
-  } catch(e) {
-    document.getElementById('aiResultArea').innerHTML = `<div class="ai-result"><p style="color:#f87171;font-size:14px">${lang === 'fr' ? 'Erreur lors de la génération. Réessaie !' : 'Error generating prediction. Please try again!'}</p></div>`;
-  }
-  btn.disabled = false;
-  btn.innerHTML = lang === 'fr' ? '🔄 Regénérer le prono' : '🔄 Regenerate prediction';
-}
-
-function aiShowResult(label, p, lang) {
-  const isFr = lang === 'fr';
-  const conf = p.confiance || p.confidence;
-  const confClass = conf >= 70 ? 'high' : 'mid';
-  const result = p.resultat || p.result;
-  const score = p.score;
-  const scorer = p.buteur || p.scorer;
-  const analysis = p.analyse || p.analysis;
-
-  document.getElementById('aiResultArea').innerHTML = `
-    <div class="ai-result">
-      <div class="ai-result-header">
-        <div class="ai-result-match">⚽ ${label}</div>
-        <div class="ai-conf ${confClass}">${conf}% ${isFr ? 'confiance' : 'confidence'}</div>
-      </div>
-      <div class="ai-metrics">
-        <div class="ai-metric">
-          <div class="ai-metric-label">${isFr ? 'Résultat' : 'Result'}</div>
-          <div class="ai-metric-val green" style="font-size:12px">${result}</div>
-        </div>
-        <div class="ai-metric">
-          <div class="ai-metric-label">${isFr ? 'Score exact' : 'Exact score'}</div>
-          <div class="ai-metric-val">${score}</div>
-        </div>
-        <div class="ai-metric">
-          <div class="ai-metric-label">${isFr ? 'Buteur' : 'Scorer'}</div>
-          <div class="ai-metric-val" style="font-size:11px">${scorer}</div>
-        </div>
-      </div>
-      <div class="ai-analysis">
-        <div class="ai-analysis-label">${isFr ? 'Analyse tactique' : 'Tactical analysis'}</div>
-        <div class="ai-analysis-text">${analysis}</div>
-      </div>
-    </div>`;
-}
+      
 </script>
 </body>
 </html>
