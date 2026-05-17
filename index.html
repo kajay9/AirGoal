@@ -2380,7 +2380,7 @@ async function aiGenerateProno() {
     : `You are a football prediction expert. Analyze the match ${match.teams[0]} vs ${match.teams[1]} at the FIFA World Cup 2026. Respond ONLY in valid JSON without any text before or after, no markdown: {"result":"${match.teams[0]} win" or "${match.teams[1]} win" or "Draw","score":"X-X","scorer":"First Last (team)","confidence":55 to 89,"analysis":"2-3 sentences of concise tactical analysis in English"}`;
 
   try {
-    const res = await fetch('/api/oracle', {
+    const res = await fetch('https://air-goal.vercel.app/api/oracle', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt, lang })
