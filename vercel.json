@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/predictions", "destination": "/predictions.html" }
+    { "source": "/predictions", "destination": "/predictions.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }
