@@ -836,9 +836,18 @@ async function triggerAIBadge(matchId, userResult) {
   const match = allMatches.find(m => m.id === matchId);
   if (!match) return;
 
+  const hostNations = ['USA', 'Mexico', 'Canada'];
+  const hasHome = hostNations.includes(match.home_team);
+  const ctxFr = hasHome
+    ? `${getTeamName(match.home_team)} joue à domicile (tournoi organisé aux USA, Mexique et Canada).`
+    : `Aucune équipe ne joue à domicile (tournoi aux USA, Mexique et Canada).`;
+  const ctxEn = hasHome
+    ? `${match.home_team} plays at home (tournament hosted in USA, Mexico and Canada).`
+    : `Neither team plays at home (tournament in USA, Mexico and Canada).`;
+
   const prompt = isFr
-    ? `Tu es l'Oracle AirGoal. Pour le match ${getTeamName(match.home_team)} vs ${getTeamName(match.away_team)} (Coupe du Monde 2026), quel est ton pronostic ? Réponds UNIQUEMENT en JSON : {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 phrase max"}`
-    : `You are the AirGoal Oracle. For the match ${match.home_team} vs ${match.away_team} (2026 World Cup), what is your prediction? Reply ONLY in JSON: {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 sentence max"}`;
+    ? `Tu es l'Oracle AirGoal. Pour le match ${getTeamName(match.home_team)} vs ${getTeamName(match.away_team)} (Coupe du Monde 2026 — chaque match est crucial). ${ctxFr} Donne ton pronostic basé uniquement sur la qualité des équipes. Réponds UNIQUEMENT en JSON : {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 phrase sur les forces des équipes uniquement"}`
+    : `You are the AirGoal Oracle. For the match ${match.home_team} vs ${match.away_team} (2026 World Cup — every match matters). ${ctxEn} Give your prediction based only on team quality. Reply ONLY in JSON: {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 sentence about team strengths only"}`;
 
   try {
     const res = await fetch('/api/oracle', {
