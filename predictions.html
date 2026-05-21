@@ -118,6 +118,39 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
   .match-grid { grid-template-columns: 1fr; }
   .nav-right { gap: 6px; }
 }
+
+/* ── ORACLE IA ── */
+.oracle-btn { width: 100%; margin-top: 0.75rem; padding: 8px; background: transparent; border: 1px solid rgba(0,168,255,0.3); border-radius: 8px; color: var(--green); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.oracle-btn:hover { background: var(--green-dim); border-color: var(--green); }
+.oracle-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.oracle-panel { margin-top: 0.75rem; background: rgba(0,168,255,0.05); border: 1px solid rgba(0,168,255,0.2); border-radius: 10px; padding: 12px; font-size: 12px; line-height: 1.6; color: #cbd5e1; display: none; }
+.oracle-panel.visible { display: block; }
+.oracle-header { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.oracle-thinking { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; padding: 8px 0; }
+.oracle-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 1s infinite; }
+.oracle-dot:nth-child(2) { animation-delay: 0.2s; }
+.oracle-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* ── BADGE CONFIANCE ── */
+.confidence-bar { margin-top: 0.75rem; }
+.confidence-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; display: flex; justify-content: space-between; }
+.confidence-track { display: flex; height: 6px; border-radius: 999px; overflow: hidden; gap: 2px; }
+.conf-home { background: var(--success); border-radius: 999px 0 0 999px; transition: width 0.5s; }
+.conf-draw { background: var(--warning); transition: width 0.5s; }
+.conf-away { background: var(--danger); border-radius: 0 999px 999px 0; transition: width 0.5s; }
+.conf-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--muted); }
+
+/* ── DAILY DROP ── */
+.daily-drop-banner { background: linear-gradient(135deg, rgba(0,168,255,0.15), rgba(74,222,128,0.1)); border: 1px solid rgba(0,168,255,0.3); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.daily-drop-left { display: flex; align-items: center; gap: 10px; }
+.daily-drop-icon { font-size: 28px; }
+.daily-drop-title { font-size: 14px; font-weight: 800; color: var(--white); }
+.daily-drop-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.daily-drop-btn { background: var(--green); color: var(--bg); border: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+.daily-drop-btn:hover { opacity: 0.85; }
+.daily-drop-btn.claimed { background: var(--bg3); color: var(--muted); cursor: default; border: 1px solid var(--border); }
+.daily-drop-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -176,6 +209,26 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
     <div class="page-sub">
       <span class="en">Predict match results and collect $AIRGL rewards</span>
       <span class="fr" style="display:none">Pronostique les matchs et collecte des récompenses $AIRGL</span>
+    </div>
+  </div>
+
+  <!-- DAILY DROP -->
+  <div class="main" style="padding-bottom:0; padding-top:1rem;">
+    <div id="dailyDropBanner" class="daily-drop-banner" style="display:none">
+      <div class="daily-drop-left">
+        <div class="daily-drop-icon">🎁</div>
+        <div>
+          <div class="daily-drop-title" id="ddTitle">Daily Drop</div>
+          <div class="daily-drop-sub" id="ddSub">
+            <span class="en">Claim your daily $AIRGL reward</span>
+            <span class="fr" style="display:none">Récupère ta récompense $AIRGL du jour</span>
+          </div>
+        </div>
+      </div>
+      <button class="daily-drop-btn" id="ddBtn" onclick="claimDailyDrop()">
+        <span class="en">Claim +10 pts</span>
+        <span class="fr" style="display:none">Réclamer +10 pts</span>
+      </button>
     </div>
   </div>
 
@@ -303,8 +356,10 @@ async function loadData() {
       (preds || []).forEach(p => { userPredictions[p.match_id] = p; });
     }
     await loadStats();
+    await loadCommunityStats();
     buildTabs();
     renderMatches(currentGroup);
+    initDailyDrop();
   } catch(err) {
     showToast(currentLang === 'fr' ? 'Erreur de chargement' : 'Error loading data', 'error');
   }
@@ -349,6 +404,8 @@ function renderMatches(group) {
     return;
   }
   container.innerHTML = matches.map(match => renderMatchCard(match)).join('');
+  // render confidence bars after DOM is ready
+  setTimeout(() => renderAllConfidenceBars(), 50);
 }
 
 function getTeamName(team) {
@@ -502,8 +559,18 @@ function renderMatchCard(match) {
           ${predictedBanner}
         ` : ''}
       </div>
+      <!-- BADGE CONFIANCE -->
+      <div class="confidence-bar" id="conf_${match.id}"></div>
+      <!-- ORACLE IA -->
+      <button class="oracle-btn" id="obtn_${match.id}" onclick="toggleOracle(${match.id}, '${match.home_team}', '${match.away_team}')">
+        🔮 <span>${isFr ? 'Analyse Oracle IA' : 'Oracle AI Analysis'}</span>
+      </button>
+      <div class="oracle-panel" id="oracle_${match.id}">
+        <div class="oracle-header">🔮 Oracle <span style="color:var(--muted);font-weight:400">AirGoal</span></div>
+        <div id="oracle_content_${match.id}"></div>
+      </div>
     </div>
-  `;
+  \`;
 }
 
 // PREDICTION
@@ -606,6 +673,159 @@ function showToast(msg, type = 'success') {
   toast.textContent = msg;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
+}
+
+
+// ═══════════════════════════════════════════
+// BADGE CONFIANCE — communauté
+// ═══════════════════════════════════════════
+let communityStats = {}; // matchId -> {home, draw, away, total}
+
+async function loadCommunityStats() {
+  try {
+    const { data } = await db.from('predictions').select('match_id, result');
+    communityStats = {};
+    (data || []).forEach(p => {
+      if (!communityStats[p.match_id]) communityStats[p.match_id] = { home: 0, draw: 0, away: 0, total: 0 };
+      communityStats[p.match_id][p.result]++;
+      communityStats[p.match_id].total++;
+    });
+  } catch(e) { console.warn('Community stats error', e); }
+}
+
+function renderConfidenceBar(matchId) {
+  const el = document.getElementById('conf_' + matchId);
+  if (!el) return;
+  const stats = communityStats[matchId];
+  if (!stats || stats.total < 3) { el.innerHTML = ''; return; }
+  const h = Math.round((stats.home / stats.total) * 100);
+  const d = Math.round((stats.draw / stats.total) * 100);
+  const a = 100 - h - d;
+  const isFr = currentLang === 'fr';
+  el.innerHTML = `
+    <div class="confidence-bar">
+      <div class="confidence-label">
+        <span>${isFr ? 'Communauté' : 'Community'}</span>
+        <span>${stats.total} ${isFr ? 'votes' : 'votes'}</span>
+      </div>
+      <div class="confidence-track">
+        <div class="conf-home" style="width:${h}%"></div>
+        <div class="conf-draw" style="width:${d}%"></div>
+        <div class="conf-away" style="width:${a}%"></div>
+      </div>
+      <div class="conf-labels">
+        <span>🏠 ${h}%</span>
+        <span>🤝 ${d}%</span>
+        <span>✈️ ${a}%</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderAllConfidenceBars() {
+  allMatches.forEach(m => renderConfidenceBar(m.id));
+}
+
+// ═══════════════════════════════════════════
+// ORACLE IA
+// ═══════════════════════════════════════════
+const oracleCache = {};
+
+async function toggleOracle(matchId, homeTeam, awayTeam) {
+  const panel = document.getElementById('oracle_' + matchId);
+  const btn = document.getElementById('obtn_' + matchId);
+  if (!panel) return;
+
+  const isOpen = panel.classList.contains('visible');
+  if (isOpen) {
+    panel.classList.remove('visible');
+    return;
+  }
+
+  panel.classList.add('visible');
+
+  if (oracleCache[matchId]) {
+    document.getElementById('oracle_content_' + matchId).innerHTML = oracleCache[matchId];
+    return;
+  }
+
+  const isFr = currentLang === 'fr';
+  const contentEl = document.getElementById('oracle_content_' + matchId);
+  contentEl.innerHTML = `<div class="oracle-thinking">
+    <div class="oracle-dot"></div><div class="oracle-dot"></div><div class="oracle-dot"></div>
+    <span>${isFr ? 'Analyse en cours...' : 'Analyzing...'}</span>
+  </div>`;
+  if (btn) btn.disabled = true;
+
+  const community = communityStats[matchId];
+  const commText = community && community.total >= 3
+    ? `Community votes: ${community.home} home / ${community.draw} draw / ${community.away} away (${community.total} total).`
+    : '';
+
+  const prompt = isFr
+    ? `Tu es l'Oracle AirGoal, expert en pronostics football. Analyse ce match de Coupe du Monde 2026 : ${homeTeam} vs ${awayTeam}. ${commText} Donne une analyse courte (4-5 lignes max) : forces/faiblesses des équipes, ton pronostic et une cote de confiance sur 100. Sois direct et précis. Réponds en français.`
+    : `You are the AirGoal Oracle, a football prediction expert. Analyze this 2026 World Cup match: ${homeTeam} vs ${awayTeam}. ${commText} Give a short analysis (4-5 lines max): team strengths/weaknesses, your prediction, and a confidence score out of 100. Be direct and concise.`;
+
+  try {
+    const res = await fetch('/api/oracle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    const text = data.result || data.content?.[0]?.text || data.text || (isFr ? 'Analyse indisponible.' : 'Analysis unavailable.');
+    const formatted = text.replace(/
+/g, '<br>');
+    oracleCache[matchId] = formatted;
+    contentEl.innerHTML = formatted;
+  } catch(e) {
+    contentEl.innerHTML = isFr ? '⚠️ Erreur de connexion à l'Oracle.' : '⚠️ Could not reach the Oracle.';
+  }
+  if (btn) btn.disabled = false;
+}
+
+// ═══════════════════════════════════════════
+// DAILY DROP
+// ═══════════════════════════════════════════
+function getDailyDropKey() {
+  return 'dailydrop_' + (walletAddress || 'guest') + '_' + new Date().toISOString().slice(0, 10);
+}
+
+function initDailyDrop() {
+  const banner = document.getElementById('dailyDropBanner');
+  if (!banner) return;
+  banner.style.display = 'flex';
+  const key = getDailyDropKey();
+  const claimed = localStorage.getItem(key);
+  const isFr = currentLang === 'fr';
+  const btn = document.getElementById('ddBtn');
+  const sub = document.getElementById('ddSub');
+  const title = document.getElementById('ddTitle');
+  if (claimed) {
+    btn.textContent = isFr ? '✓ Déjà réclamé' : '✓ Already claimed';
+    btn.classList.add('claimed');
+    btn.disabled = true;
+    if (sub) sub.innerHTML = `<span class="en">Come back tomorrow for your next drop!</span><span class="fr" style="display:${isFr?'inline':'none'}">Reviens demain pour ton prochain drop !</span>`;
+  } else {
+    if (sub) sub.innerHTML = `<span class="en">Daily +10 pts reward — free!</span><span class="fr" style="display:${isFr?'inline':'none'}">Récompense quotidienne +10 pts — gratuit !</span>`;
+  }
+}
+
+function claimDailyDrop() {
+  const key = getDailyDropKey();
+  if (localStorage.getItem(key)) return;
+  localStorage.setItem(key, '1');
+  const isFr = currentLang === 'fr';
+  const btn = document.getElementById('ddBtn');
+  const sub = document.getElementById('ddSub');
+  btn.textContent = isFr ? '✓ Déjà réclamé' : '✓ Already claimed';
+  btn.classList.add('claimed');
+  btn.disabled = true;
+  if (sub) sub.innerHTML = `<span class="en">Come back tomorrow for your next drop!</span><span class="fr" style="display:${isFr?'inline':'none'}">Reviens demain pour ton prochain drop !</span>`;
+  // Update points display
+  const pts = document.getElementById('totalPoints');
+  if (pts) pts.textContent = parseInt(pts.textContent || 0) + 10;
+  showToast(isFr ? '🎁 +10 pts réclamés !' : '🎁 +10 pts claimed!', 'success');
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
