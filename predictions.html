@@ -807,7 +807,7 @@ async function initDailyDrop() {
   if (!container) return;
 
   if (!todayMatches.length) {
-    container.innerHTML = `<div style="font-size:12px;color:var(--muted)">${isFr ? 'Aucun match prévu aujourd'hui.' : 'No matches scheduled today.'}</div>`;
+    container.innerHTML = `<div style="font-size:12px;color:var(--muted)">${isFr ? "Aucun match pr\u00e9vu aujourd'hui." : 'No matches scheduled today.'}</div>`;
     return;
   }
 
