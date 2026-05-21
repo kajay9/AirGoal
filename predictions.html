@@ -119,6 +119,22 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
   .nav-right { gap: 6px; }
 }
 
+/* ── BADGE IA ── */
+.ai-badge { margin-top: 8px; padding: 7px 10px; border-radius: 8px; font-size: 12px; display: none; align-items: center; gap: 7px; border: 1px solid transparent; transition: all 0.3s; }
+.ai-badge.visible { display: flex; }
+.ai-badge.agree { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.3); color: #4ade80; }
+.ai-badge.disagree { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.3); color: #fbbf24; }
+.ai-badge-icon { font-size: 15px; }
+.ai-badge-text { line-height: 1.4; }
+.ai-badge-loading { display: flex; align-items: center; gap: 6px; padding: 7px 10px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+/* ── RÉSUMÉ APRÈS-MATCH ── */
+.postmatch-summary { margin-top: 10px; background: rgba(0,168,255,0.05); border: 1px solid rgba(0,168,255,0.15); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #cbd5e1; line-height: 1.6; }
+.postmatch-header { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.postmatch-result { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.postmatch-result.correct { background: rgba(74,222,128,0.15); color: #4ade80; }
+.postmatch-result.wrong { background: rgba(248,113,113,0.15); color: #f87171; }
+
 /* ── ORACLE IA ── */
 .oracle-btn { width: 100%; margin-top: 0.75rem; padding: 8px; background: transparent; border: 1px solid rgba(0,168,255,0.3); border-radius: 8px; color: var(--green); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .oracle-btn:hover { background: var(--green-dim); border-color: var(--green); }
@@ -406,8 +422,11 @@ function renderMatches(group) {
     return;
   }
   container.innerHTML = matches.map(match => renderMatchCard(match)).join('');
-  // render confidence bars after DOM is ready
-  setTimeout(() => renderAllConfidenceBars(), 50);
+  // render confidence bars + post-match summaries after DOM is ready
+  setTimeout(() => {
+    renderAllConfidenceBars();
+    loadPostMatchSummaries();
+  }, 50);
 }
 
 function getTeamName(team) {
@@ -561,7 +580,11 @@ function renderMatchCard(match) {
           ${predictedBanner}
         ` : ''}
       </div>
-      <!-- BADGE CONFIANCE -->
+      <!-- BADGE IA (validation prono) -->
+      <div id="aibadge_${match.id}" class="ai-badge"></div>
+      <!-- RÉSUMÉ APRÈS-MATCH -->
+      ${isFinished && pred ? `<div id="postmatch_${match.id}" class="postmatch-summary"><div class="postmatch-loading" style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px"><div class="oracle-dot"></div><div class="oracle-dot"></div><div class="oracle-dot"></div><span>${isFr ? "Analyse du match en cours..." : "Analyzing match result..."}</span></div></div>` : ''}
+      <!-- BADGE CONFIANCE communauté -->
       <div class="confidence-bar" id="conf_${match.id}"></div>
       <!-- ORACLE IA -->
       <button class="oracle-btn" id="obtn_${match.id}" onclick="toggleOracle(${match.id}, '${match.home_team}', '${match.away_team}')">
@@ -583,6 +606,8 @@ function selectResult(matchId, result, btn) {
   btn.classList.add('selected');
   if (!pendingPredictions[matchId]) pendingPredictions[matchId] = {};
   pendingPredictions[matchId].result = result;
+  // Lancer validation IA
+  triggerAIBadge(matchId, result);
   const sbtn = document.getElementById(`sbtn_${matchId}`);
   if (sbtn) {
     sbtn.disabled = false;
@@ -783,6 +808,125 @@ async function toggleOracle(matchId, homeTeam, awayTeam) {
     contentEl.innerHTML = isFr ? '⚠️ Erreur de connexion à l\'Oracle.' : '⚠️ Could not reach the Oracle.';
   }
   if (btn) btn.disabled = false;
+}
+
+
+// ═══════════════════════════════════════════
+// BADGE IA — validation prono en temps réel
+// ═══════════════════════════════════════════
+const aiBadgeCache = {}; // matchId -> { home: '...', draw: '...', away: '...' }
+
+async function triggerAIBadge(matchId, userResult) {
+  const badge = document.getElementById('aibadge_' + matchId);
+  if (!badge) return;
+
+  const isFr = currentLang === 'fr';
+
+  // Si on a déjà l'analyse pour ce match, afficher direct
+  if (aiBadgeCache[matchId]) {
+    showAIBadge(matchId, userResult, aiBadgeCache[matchId]);
+    return;
+  }
+
+  // Loader pendant l'appel IA
+  badge.className = 'ai-badge-loading';
+  badge.innerHTML = `<div class="oracle-dot"></div><div class="oracle-dot"></div><div class="oracle-dot"></div><span>${isFr ? "L'Oracle analyse..." : "Oracle analyzing..."}</span>`;
+
+  // Trouver les équipes
+  const match = allMatches.find(m => m.id === matchId);
+  if (!match) return;
+
+  const prompt = isFr
+    ? `Tu es l'Oracle AirGoal. Pour le match ${getTeamName(match.home_team)} vs ${getTeamName(match.away_team)} (Coupe du Monde 2026), quel est ton pronostic ? Réponds UNIQUEMENT en JSON : {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 phrase max"}`
+    : `You are the AirGoal Oracle. For the match ${match.home_team} vs ${match.away_team} (2026 World Cup), what is your prediction? Reply ONLY in JSON: {"prediction":"home"|"draw"|"away","confidence":0-100,"reason":"1 sentence max"}`;
+
+  try {
+    const res = await fetch('/api/oracle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    const text = data.result || data.content?.[0]?.text || data.text || '{}';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    aiBadgeCache[matchId] = parsed;
+    showAIBadge(matchId, userResult, parsed);
+  } catch(e) {
+    badge.className = '';
+    badge.innerHTML = '';
+  }
+}
+
+function showAIBadge(matchId, userResult, oracle) {
+  const badge = document.getElementById('aibadge_' + matchId);
+  if (!badge) return;
+  const isFr = currentLang === 'fr';
+  const agree = oracle.prediction === userResult;
+  const conf = oracle.confidence || '';
+  const reason = oracle.reason || '';
+
+  const resultLabel = (r) => {
+    const match = allMatches.find(m => m.id === matchId);
+    if (!match) return r;
+    if (r === 'home') return getTeamName(match.home_team);
+    if (r === 'away') return getTeamName(match.away_team);
+    return isFr ? 'Nul' : 'Draw';
+  };
+
+  if (agree) {
+    badge.className = 'ai-badge visible agree';
+    badge.innerHTML = `<div class="ai-badge-icon">✅</div><div class="ai-badge-text"><strong>${isFr ? "L'Oracle confirme ton choix" : "Oracle agrees with you"}</strong> · ${conf}% ${isFr ? 'confiance' : 'confidence'}<br><span style="font-size:11px;opacity:0.8">${reason}</span></div>`;
+  } else {
+    badge.className = 'ai-badge visible disagree';
+    badge.innerHTML = `<div class="ai-badge-icon">⚠️</div><div class="ai-badge-text"><strong>${isFr ? "L'Oracle préfère" : "Oracle suggests"} ${resultLabel(oracle.prediction)}</strong> · ${conf}% ${isFr ? 'confiance' : 'confidence'}<br><span style="font-size:11px;opacity:0.8">${isFr ? "Mais c'est ton choix !" : "But it's your call!"} ${reason}</span></div>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+// RÉSUMÉ APRÈS-MATCH
+// ═══════════════════════════════════════════
+async function loadPostMatchSummaries() {
+  const isFr = currentLang === 'fr';
+  const finishedWithPred = allMatches.filter(m => {
+    const isFinished = m.status === 'finished' || (m.match_date && new Date(m.match_date) < new Date());
+    const pred = userPredictions[m.id];
+    return isFinished && pred && m.home_score !== null;
+  });
+
+  for (const match of finishedWithPred) {
+    const container = document.getElementById('postmatch_' + match.id);
+    if (!container) continue;
+
+    const pred = userPredictions[match.id];
+    const actualResult = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw';
+    const userWasRight = pred.result === actualResult;
+    const resultLabel = (r) => r === 'home' ? getTeamName(match.home_team) : r === 'away' ? getTeamName(match.away_team) : (isFr ? 'Nul' : 'Draw');
+
+    const prompt = isFr
+      ? `Tu es l'Oracle AirGoal. Le match ${getTeamName(match.home_team)} vs ${getTeamName(match.away_team)} s'est terminé ${match.home_score}-${match.away_score}. L'utilisateur avait pronostiqué : ${resultLabel(pred.result)}. En 2 phrases max, commente ce résultat de façon engageante.`
+      : `You are the AirGoal Oracle. The match ${match.home_team} vs ${match.away_team} ended ${match.home_score}-${match.away_score}. The user predicted: ${resultLabel(pred.result)}. In 2 sentences max, comment on this result in an engaging way.`;
+
+    try {
+      const res = await fetch('/api/oracle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      const text = data.result || data.content?.[0]?.text || data.text || '';
+      const badge = userWasRight
+        ? `<span class="postmatch-result correct">✅ ${isFr ? 'Bon prono !' : 'Correct!'}</span>`
+        : `<span class="postmatch-result wrong">❌ ${isFr ? 'Prono raté' : 'Wrong pick'}</span>`;
+      container.innerHTML = `
+        <div class="postmatch-header">🏁 ${isFr ? 'Résumé Oracle' : 'Oracle Summary'}</div>
+        ${badge}
+        <div>${text}</div>
+      `;
+    } catch(e) {
+      container.innerHTML = '';
+    }
+  }
 }
 
 // ═══════════════════════════════════════════
