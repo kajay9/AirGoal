@@ -774,12 +774,11 @@ async function toggleOracle(matchId, homeTeam, awayTeam) {
     });
     const data = await res.json();
     const text = data.result || data.content?.[0]?.text || data.text || (isFr ? 'Analyse indisponible.' : 'Analysis unavailable.');
-    const formatted = text.replace(/
-/g, '<br>');
+    const formatted = text.replace(/\n/g, '<br>');
     oracleCache[matchId] = formatted;
     contentEl.innerHTML = formatted;
   } catch(e) {
-    contentEl.innerHTML = isFr ? '⚠️ Erreur de connexion à l'Oracle.' : '⚠️ Could not reach the Oracle.';
+    contentEl.innerHTML = isFr ? '⚠️ Erreur de connexion à l\'Oracle.' : '⚠️ Could not reach the Oracle.';
   }
   if (btn) btn.disabled = false;
 }
