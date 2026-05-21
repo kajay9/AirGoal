@@ -789,21 +789,44 @@ async function toggleOracle(matchId, homeTeam, awayTeam) {
     ? `Community votes: ${community.home} home / ${community.draw} draw / ${community.away} away (${community.total} total).`
     : '';
 
+  const matchObj2 = allMatches.find(m => m.id === matchId);
+  const rawHome2 = matchObj2 ? matchObj2.home_team : '';
+  const hostNations3 = ['USA', 'Mexico', 'Canada'];
+  const hasHomeAdv2 = hostNations3.includes(rawHome2);
+  const ctxFr2 = hasHomeAdv2
+    ? `${homeTeam} joue à domicile (tournoi aux USA, Mexique et Canada).`
+    : `Aucune équipe ne joue à domicile (tournoi aux USA, Mexique et Canada).`;
+  const ctxEn2 = hasHomeAdv2
+    ? `${homeTeam} plays at home (tournament in USA/Mexico/Canada).`
+    : `Neither team plays at home (tournament in USA/Mexico/Canada).`;
+
   const prompt = isFr
-    ? `Tu es l'Oracle AirGoal, expert en pronostics football. Analyse ce match de Coupe du Monde 2026 : ${homeTeam} vs ${awayTeam}. ${commText} Donne une analyse courte (4-5 lignes max) : forces/faiblesses des équipes, ton pronostic et une cote de confiance sur 100. Sois direct et précis. Réponds en français.`
-    : `You are the AirGoal Oracle, a football prediction expert. Analyze this 2026 World Cup match: ${homeTeam} vs ${awayTeam}. ${commText} Give a short analysis (4-5 lines max): team strengths/weaknesses, your prediction, and a confidence score out of 100. Be direct and concise.`;
+    ? `Tu es l'Oracle AirGoal, expert en pronostics football. Analyse ce match de Coupe du Monde 2026 : ${homeTeam} vs ${awayTeam}. ${ctxFr2} ${commText} Donne une analyse courte (4-5 lignes max) : forces/faiblesses des équipes, ton pronostic et une cote de confiance sur 100. Sois direct et précis. Réponds en français.`
+    : `You are the AirGoal Oracle, a football prediction expert. Analyze this 2026 World Cup match: ${homeTeam} vs ${awayTeam}. ${ctxEn2} ${commText} Give a short analysis (4-5 lines max): team strengths/weaknesses, your prediction, and a confidence score out of 100. Be direct and concise.`;
 
   try {
     const res = await fetch('/api/oracle', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({
+        mode: 'oracle',
+        matchId: matchId,
+        homeTeam: rawHome2,
+        awayTeam: matchObj2 ? matchObj2.away_team : awayTeam,
+        prompt
+      })
     });
     const data = await res.json();
-    const text = data.result || data.content?.[0]?.text || data.text || (isFr ? 'Analyse indisponible.' : 'Analysis unavailable.');
-    const formatted = text.replace(/\n/g, '<br>');
+    const text = data.result || (isFr ? 'Analyse indisponible.' : 'Analysis unavailable.');
+    const formatted = text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^#{1,3}\s+(.+)$/gm, '<div style="font-weight:700;color:var(--green);margin-bottom:6px">$1</div>')
+      .replace(/\n/g, '<br>');
     oracleCache[matchId] = formatted;
     contentEl.innerHTML = formatted;
+    if (data.fromCache) {
+      contentEl.innerHTML += `<div style="font-size:10px;color:var(--muted);margin-top:6px">⚡ ${isFr ? 'Analyse en cache' : 'Cached analysis'}</div>`;
+    }
   } catch(e) {
     contentEl.innerHTML = isFr ? '⚠️ Erreur de connexion à l\'Oracle.' : '⚠️ Could not reach the Oracle.';
   }
