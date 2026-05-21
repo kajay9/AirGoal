@@ -142,15 +142,16 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
 .conf-labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--muted); }
 
 /* ── DAILY DROP ── */
-.daily-drop-banner { background: linear-gradient(135deg, rgba(0,168,255,0.15), rgba(74,222,128,0.1)); border: 1px solid rgba(0,168,255,0.3); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.daily-drop-left { display: flex; align-items: center; gap: 10px; }
-.daily-drop-icon { font-size: 28px; }
-.daily-drop-title { font-size: 14px; font-weight: 800; color: var(--white); }
-.daily-drop-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.daily-drop-btn { background: var(--green); color: var(--bg); border: none; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
-.daily-drop-btn:hover { opacity: 0.85; }
-.daily-drop-btn.claimed { background: var(--bg3); color: var(--muted); cursor: default; border: 1px solid var(--border); }
-.daily-drop-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.daily-drop-banner { background: rgba(0,168,255,0.05); border: 1px solid rgba(0,168,255,0.2); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+.daily-drop-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem; }
+.daily-drop-icon { font-size: 20px; }
+.daily-drop-title { font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; }
+.daily-drop-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+.daily-drop-matches { display: flex; flex-direction: column; gap: 8px; }
+.dd-match { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
+.dd-match-teams { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.dd-match-analysis { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.dd-loading { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; padding: 4px 0; }
 </style>
 </head>
 <body>
@@ -215,20 +216,21 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
   <!-- DAILY DROP -->
   <div class="main" style="padding-bottom:0; padding-top:1rem;">
     <div id="dailyDropBanner" class="daily-drop-banner" style="display:none">
-      <div class="daily-drop-left">
-        <div class="daily-drop-icon">🎁</div>
-        <div>
-          <div class="daily-drop-title" id="ddTitle">Daily Drop</div>
-          <div class="daily-drop-sub" id="ddSub">
-            <span class="en">Claim your daily $AIRGL reward</span>
-            <span class="fr" style="display:none">Récupère ta récompense $AIRGL du jour</span>
-          </div>
+      <div class="daily-drop-header">
+        <div class="daily-drop-icon">📋</div>
+        <div class="daily-drop-title">
+          <span class="en">Today's Brief</span>
+          <span class="fr" style="display:none">Brief du Jour</span>
+        </div>
+        <div class="daily-drop-date" id="ddDate"></div>
+      </div>
+      <div class="daily-drop-matches" id="ddMatches">
+        <div class="dd-loading">
+          <div class="oracle-dot"></div><div class="oracle-dot"></div><div class="oracle-dot"></div>
+          <span class="en">Loading today's matches...</span>
+          <span class="fr" style="display:none">Chargement des matchs du jour...</span>
         </div>
       </div>
-      <button class="daily-drop-btn" id="ddBtn" onclick="claimDailyDrop()">
-        <span class="en">Claim +10 pts</span>
-        <span class="fr" style="display:none">Réclamer +10 pts</span>
-      </button>
     </div>
   </div>
 
@@ -784,47 +786,64 @@ async function toggleOracle(matchId, homeTeam, awayTeam) {
 }
 
 // ═══════════════════════════════════════════
-// DAILY DROP
+// DAILY DROP — Brief informatif du jour
 // ═══════════════════════════════════════════
-function getDailyDropKey() {
-  return 'dailydrop_' + (walletAddress || 'guest') + '_' + new Date().toISOString().slice(0, 10);
-}
-
-function initDailyDrop() {
+async function initDailyDrop() {
   const banner = document.getElementById('dailyDropBanner');
   if (!banner) return;
-  banner.style.display = 'flex';
-  const key = getDailyDropKey();
-  const claimed = localStorage.getItem(key);
-  const isFr = currentLang === 'fr';
-  const btn = document.getElementById('ddBtn');
-  const sub = document.getElementById('ddSub');
-  const title = document.getElementById('ddTitle');
-  if (claimed) {
-    btn.textContent = isFr ? '✓ Déjà réclamé' : '✓ Already claimed';
-    btn.classList.add('claimed');
-    btn.disabled = true;
-    if (sub) sub.innerHTML = `<span class="en">Come back tomorrow for your next drop!</span><span class="fr" style="display:${isFr?'inline':'none'}">Reviens demain pour ton prochain drop !</span>`;
-  } else {
-    if (sub) sub.innerHTML = `<span class="en">Daily +10 pts reward — free!</span><span class="fr" style="display:${isFr?'inline':'none'}">Récompense quotidienne +10 pts — gratuit !</span>`;
-  }
-}
+  banner.style.display = 'block';
 
-function claimDailyDrop() {
-  const key = getDailyDropKey();
-  if (localStorage.getItem(key)) return;
-  localStorage.setItem(key, '1');
   const isFr = currentLang === 'fr';
-  const btn = document.getElementById('ddBtn');
-  const sub = document.getElementById('ddSub');
-  btn.textContent = isFr ? '✓ Déjà réclamé' : '✓ Already claimed';
-  btn.classList.add('claimed');
-  btn.disabled = true;
-  if (sub) sub.innerHTML = `<span class="en">Come back tomorrow for your next drop!</span><span class="fr" style="display:${isFr?'inline':'none'}">Reviens demain pour ton prochain drop !</span>`;
-  // Update points display
-  const pts = document.getElementById('totalPoints');
-  if (pts) pts.textContent = parseInt(pts.textContent || 0) + 10;
-  showToast(isFr ? '🎁 +10 pts réclamés !' : '🎁 +10 pts claimed!', 'success');
+  const today = new Date();
+  const dateStr = today.toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  const ddDate = document.getElementById('ddDate');
+  if (ddDate) ddDate.textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+  // Trouver les matchs du jour (même date)
+  const todayStr = today.toISOString().slice(0, 10);
+  const todayMatches = allMatches.filter(m => m.match_date && m.match_date.slice(0, 10) === todayStr).slice(0, 3);
+
+  const container = document.getElementById('ddMatches');
+  if (!container) return;
+
+  if (!todayMatches.length) {
+    container.innerHTML = `<div style="font-size:12px;color:var(--muted)">${isFr ? 'Aucun match prévu aujourd'hui.' : 'No matches scheduled today.'}</div>`;
+    return;
+  }
+
+  // Afficher les matchs avec analyse IA
+  container.innerHTML = todayMatches.map(m => `
+    <div class="dd-match" id="ddm_${m.id}">
+      <div class="dd-match-teams">${getFlag(m.home_team)} ${getTeamName(m.home_team)} vs ${getTeamName(m.away_team)} ${getFlag(m.away_team)}</div>
+      <div class="dd-match-analysis dd-loading" id="dda_${m.id}">
+        <div class="oracle-dot"></div><div class="oracle-dot"></div><div class="oracle-dot"></div>
+        <span>${isFr ? 'Analyse en cours...' : 'Analyzing...'}</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Appel IA pour chaque match
+  for (const m of todayMatches) {
+    const el = document.getElementById('dda_' + m.id);
+    if (!el) continue;
+    const prompt = isFr
+      ? `Tu es l'Oracle AirGoal. En 2 phrases max, donne un tip rapide pour le match ${getTeamName(m.home_team)} vs ${getTeamName(m.away_team)} (Coupe du Monde 2026). Sois direct et concis.`
+      : `You are the AirGoal Oracle. In max 2 sentences, give a quick tip for ${m.home_team} vs ${m.away_team} (2026 World Cup). Be direct and concise.`;
+    try {
+      const res = await fetch('/api/oracle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      const text = data.result || data.content?.[0]?.text || data.text || '';
+      el.className = 'dd-match-analysis';
+      el.textContent = text;
+    } catch(e) {
+      el.className = 'dd-match-analysis';
+      el.textContent = isFr ? 'Analyse indisponible.' : 'Analysis unavailable.';
+    }
+  }
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
