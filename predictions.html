@@ -143,6 +143,30 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
 .postmatch-result.correct { background: rgba(74,222,128,0.15); color: #4ade80; }
 .postmatch-result.wrong { background: rgba(248,113,113,0.15); color: #f87171; }
 
+/* ── TOURNAMENT PREDICTION ── */
+.tournament-section { background: linear-gradient(135deg, rgba(0,168,255,0.08), rgba(251,191,36,0.05)); border: 1px solid rgba(0,168,255,0.25); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.tournament-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.tournament-badge { background: rgba(0,168,255,0.15); color: var(--green); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--green); text-transform: uppercase; letter-spacing: 0.06em; }
+.tournament-title { font-size: 16px; font-weight: 900; color: var(--white); }
+.tournament-sub { font-size: 12px; color: var(--muted); margin-bottom: 1.25rem; margin-top: 4px; }
+.tournament-deadline { color: var(--warning); font-weight: 700; }
+.tournament-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
+@media(max-width:600px) { .tournament-grid { grid-template-columns: 1fr; } }
+.tournament-field { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.tournament-field-icon { font-size: 24px; margin-bottom: 6px; }
+.tournament-field-label { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.tournament-field-reward { font-size: 11px; color: var(--warning); font-weight: 600; margin-bottom: 10px; }
+.tournament-select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: var(--white); font-size: 13px; outline: none; cursor: pointer; }
+.tournament-select:focus { border-color: var(--green); }
+.tournament-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; color: var(--white); font-size: 13px; outline: none; }
+.tournament-input:focus { border-color: var(--green); }
+.tournament-input::placeholder { color: var(--muted); }
+.tournament-save { width: 100%; background: var(--green); color: var(--bg); border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 8px; transition: opacity 0.15s; }
+.tournament-save:hover { opacity: 0.85; }
+.tournament-save:disabled { opacity: 0.4; cursor: not-allowed; }
+.tournament-saved { background: var(--bg3); color: var(--success); border: 1px solid var(--success); }
+.tournament-closed { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+
 /* ── ORACLE IA ── */
 .oracle-btn { width: 100%; margin-top: 0.75rem; padding: 8px; background: transparent; border: 1px solid rgba(0,168,255,0.3); border-radius: 8px; color: var(--green); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .oracle-btn:hover { background: var(--green-dim); border-color: var(--green); }
@@ -234,6 +258,24 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
     <div class="page-sub">
       <span class="en">Predict match results and collect $AIRGL rewards</span>
       <span class="fr" style="display:none">Pronostique les matchs et collecte des récompenses $AIRGL</span>
+    </div>
+  </div>
+
+  <!-- TOURNAMENT PREDICTION -->
+  <div class="main" style="padding-bottom:0; padding-top:1rem;">
+    <div id="tournamentSection" class="tournament-section" style="display:none">
+      <div class="tournament-header">
+        <span class="tournament-badge">⚡ AirGoal+</span>
+        <div class="tournament-title">
+          <span class="en">Tournament Prediction</span>
+          <span class="fr" style="display:none">Pronostic du Tournoi</span>
+        </div>
+      </div>
+      <div class="tournament-sub">
+        <span class="en">Make your 3 special predictions before <span class="tournament-deadline">June 16, 2026</span>. Same reward for everyone who gets it right!</span>
+        <span class="fr" style="display:none">Fais tes 3 pronostics spéciaux avant le <span class="tournament-deadline">16 juin 2026</span>. Même récompense pour tous ceux qui ont vu juste !</span>
+      </div>
+      <div id="tournamentContent"></div>
     </div>
   </div>
 
@@ -386,6 +428,7 @@ async function loadData() {
     buildTabs();
     renderMatches(currentGroup);
     initDailyDrop();
+    if (isPremium) await loadTournamentPrediction();
   } catch(err) {
     showToast(currentLang === 'fr' ? 'Erreur de chargement' : 'Error loading data', 'error');
   }
@@ -711,6 +754,143 @@ function showToast(msg, type = 'success') {
   setTimeout(() => toast.remove(), 3000);
 }
 
+
+
+// ═══════════════════════════════════════════
+// TOURNAMENT PREDICTION
+// ═══════════════════════════════════════════
+const TOURNAMENT_DEADLINE = new Date('2026-06-16T23:59:59+00:00');
+const TEAMS_48 = [
+  'Algeria','Argentina','Australia','Austria','Belgium','Bosnia-Herzegovina',
+  'Brazil','Canada','Cape Verde','Colombia','Croatia','Curacao','Czechia',
+  'DR Congo','Ecuador','Egypt','England','France','Germany','Ghana',
+  'Haiti','Iran','Iraq','Ivory Coast','Japan','Jordan','Mexico',
+  'Morocco','Netherlands','New Zealand','Norway','Panama','Paraguay',
+  'Portugal','Qatar','Saudi Arabia','Scotland','Senegal','South Africa',
+  'South Korea','Spain','Sweden','Switzerland','Tunisia','Turkey',
+  'Uruguay','USA','Uzbekistan'
+];
+
+let tournamentPred = null;
+
+function isTournamentOpen() {
+  return new Date() < TOURNAMENT_DEADLINE;
+}
+
+async function loadTournamentPrediction() {
+  if (!walletAddress) return;
+  const section = document.getElementById('tournamentSection');
+  if (section) section.style.display = 'block';
+
+  const { data } = await db.from('tournament_predictions').select('*').eq('wallet', walletAddress).single().catch(() => ({ data: null }));
+  tournamentPred = data;
+  renderTournamentForm();
+}
+
+function renderTournamentForm() {
+  const container = document.getElementById('tournamentContent');
+  if (!container) return;
+  const isFr = currentLang === 'fr';
+  const isOpen = isTournamentOpen();
+
+  const teamOptions = TEAMS_48.map(t => `<option value="${t}" ${tournamentPred?.winner === t ? 'selected' : ''}>${t}</option>`).join('');
+  const teamOptions2 = TEAMS_48.map(t => `<option value="${t}" ${tournamentPred?.finalist === t ? 'selected' : ''}>${t}</option>`).join('');
+
+  if (!isOpen) {
+    container.innerHTML = `
+      <div class="tournament-grid">
+        <div class="tournament-field">
+          <div class="tournament-field-icon">🏆</div>
+          <div class="tournament-field-label">${isFr ? 'Vainqueur' : 'Winner'}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--white);margin-top:6px">${tournamentPred?.winner || (isFr ? 'Non renseigné' : 'Not set')}</div>
+        </div>
+        <div class="tournament-field">
+          <div class="tournament-field-icon">🥈</div>
+          <div class="tournament-field-label">${isFr ? 'Finaliste' : 'Finalist'}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--white);margin-top:6px">${tournamentPred?.finalist || (isFr ? 'Non renseigné' : 'Not set')}</div>
+        </div>
+        <div class="tournament-field">
+          <div class="tournament-field-icon">⚽</div>
+          <div class="tournament-field-label">Top Scorer</div>
+          <div style="font-size:14px;font-weight:700;color:var(--white);margin-top:6px">${tournamentPred?.top_scorer || (isFr ? 'Non renseigné' : 'Not set')}</div>
+        </div>
+      </div>
+      <div class="tournament-closed">🔒 ${isFr ? 'Pronostics fermés depuis le 16 juin 2026' : 'Predictions closed since June 16, 2026'}</div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="tournament-grid">
+      <div class="tournament-field">
+        <div class="tournament-field-icon">🏆</div>
+        <div class="tournament-field-label">${isFr ? 'Vainqueur du tournoi' : 'Tournament Winner'}</div>
+        <div class="tournament-field-reward">50,000 $AIRGL</div>
+        <select class="tournament-select" id="tp_winner">
+          <option value="">${isFr ? '-- Choisir une équipe --' : '-- Select a team --'}</option>
+          ${teamOptions}
+        </select>
+      </div>
+      <div class="tournament-field">
+        <div class="tournament-field-icon">🥈</div>
+        <div class="tournament-field-label">${isFr ? 'Finaliste' : 'Finalist'}</div>
+        <div class="tournament-field-reward">20,000 $AIRGL</div>
+        <select class="tournament-select" id="tp_finalist">
+          <option value="">${isFr ? '-- Choisir une équipe --' : '-- Select a team --'}</option>
+          ${teamOptions2}
+        </select>
+      </div>
+      <div class="tournament-field">
+        <div class="tournament-field-icon">⚽</div>
+        <div class="tournament-field-label">Top Scorer</div>
+        <div class="tournament-field-reward">30,000 $AIRGL</div>
+        <input type="text" class="tournament-input" id="tp_scorer"
+          placeholder="${isFr ? 'Ex: Mbappé, Haaland...' : 'E.g. Mbappe, Haaland...'}"
+          value="${tournamentPred?.top_scorer || ''}"/>
+      </div>
+    </div>
+    <button class="tournament-save ${tournamentPred ? 'tournament-saved' : ''}" id="tp_save" onclick="saveTournamentPrediction()">
+      ${tournamentPred
+        ? (isFr ? '✓ Pronostics sauvegardés — Modifier' : '✓ Saved — Click to update')
+        : (isFr ? 'Sauvegarder mes pronostics' : 'Save my predictions')}
+    </button>
+  `;
+}
+
+async function saveTournamentPrediction() {
+  if (!walletAddress || !isTournamentOpen()) return;
+  const isFr = currentLang === 'fr';
+  const winner = document.getElementById('tp_winner')?.value;
+  const finalist = document.getElementById('tp_finalist')?.value;
+  const scorer = document.getElementById('tp_scorer')?.value.trim();
+
+  if (!winner || !finalist || !scorer) {
+    showToast(isFr ? '⚠️ Remplis les 3 champs !' : '⚠️ Fill in all 3 fields!', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('tp_save');
+  if (btn) { btn.disabled = true; btn.textContent = isFr ? 'Sauvegarde...' : 'Saving...'; }
+
+  const payload = { wallet: walletAddress, winner, finalist, top_scorer: scorer, updated_at: new Date().toISOString() };
+
+  let error;
+  if (tournamentPred) {
+    ({ error } = await db.from('tournament_predictions').update(payload).eq('wallet', walletAddress));
+  } else {
+    ({ error } = await db.from('tournament_predictions').insert(payload));
+  }
+
+  if (error) {
+    showToast(isFr ? '❌ Erreur de sauvegarde' : '❌ Save error', 'error');
+    if (btn) { btn.disabled = false; }
+    return;
+  }
+
+  tournamentPred = payload;
+  showToast(isFr ? '✅ Pronostics sauvegardés !' : '✅ Predictions saved!', 'success');
+  renderTournamentForm();
+}
 
 // ═══════════════════════════════════════════
 // BADGE CONFIANCE — communauté
