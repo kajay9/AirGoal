@@ -86,6 +86,35 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
 .match-result-display { font-size: 13px; color: var(--muted); margin-top: 8px; }
 .match-result-display strong { color: var(--success); }
 
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 2rem; background: var(--bg2); padding: 4px; border-radius: 10px; width: fit-content; }
+.tab-btn { background: transparent; border: none; color: var(--muted); padding: 8px 20px; border-radius: 7px; font-weight: 700; font-size: 13px; cursor: pointer; }
+.tab-btn.active { background: var(--blue); color: var(--bg); }
+
+/* LEADERBOARD */
+.lb-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.lb-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+.pool-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; }
+.pool-card.premium { border-color: rgba(0,168,255,0.3); }
+.pool-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.pool-amount { font-size: 22px; font-weight: 900; color: var(--blue); }
+.pool-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.lb-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.lb-table th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+.lb-table td { padding: 10px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+.lb-table tr:hover td { background: rgba(15,23,42,0.5); }
+.lb-rank { font-weight: 900; color: var(--muted); }
+.lb-rank.top1 { color: #ffd700; }
+.lb-rank.top2 { color: #c0c0c0; }
+.lb-rank.top3 { color: #cd7f32; }
+.lb-wallet { font-family: monospace; font-size: 12px; }
+.lb-type-free { background: rgba(100,116,139,0.15); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.lb-type-premium { background: rgba(0,168,255,0.15); color: var(--blue); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; border: 1px solid rgba(0,168,255,0.3); }
+.lb-pts { font-weight: 900; color: var(--white); }
+.lb-row-premium td { background: rgba(0,168,255,0.03); }
+.refresh-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.refresh-btn:hover { border-color: var(--blue); color: var(--blue); }
+
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; z-index: 999; display: none; }
 .toast.success { border-color: var(--success); color: var(--success); }
 .toast.error { border-color: var(--danger); color: var(--danger); }
@@ -117,6 +146,18 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
   </nav>
 
   <div class="main">
+    <!-- TABS -->
+    <div class="tabs" style="margin-bottom:1.5rem;">
+      <button class="tab-btn active" id="tab-matches" onclick="switchTab('matches')">
+        ⚽ <span class="en">Matches</span><span class="fr" style="display:none">Matchs</span>
+      </button>
+      <button class="tab-btn" id="tab-leaderboard" onclick="switchTab('leaderboard')">
+        🏆 <span class="en">Leaderboard</span><span class="fr" style="display:none">Classement</span>
+      </button>
+    </div>
+
+    <!-- MATCHES TAB -->
+    <div id="tab-content-matches">
     <div class="page-title">Match Management</div>
     <div class="page-sub">Validate results and calculate points for each match</div>
 
@@ -142,6 +183,75 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
     </div>
 
     <div id="matchList"><div class="loading">Loading matches...</div></div>
+    </div><!-- end tab-content-matches -->
+
+    <!-- LEADERBOARD TAB -->
+    <div id="tab-content-leaderboard" style="display:none">
+      <div class="lb-header">
+        <div>
+          <div class="page-title">
+            <span class="en">Leaderboard</span>
+            <span class="fr" style="display:none">Classement</span>
+          </div>
+          <div class="page-sub">
+            <span class="en">All players ranked by total points</span>
+            <span class="fr" style="display:none">Tous les joueurs classés par points totaux</span>
+          </div>
+        </div>
+        <button class="refresh-btn" onclick="loadLeaderboard()">🔄 <span class="en">Refresh</span><span class="fr" style="display:none">Rafraîchir</span></button>
+      </div>
+
+      <!-- POOLS -->
+      <div class="lb-pools">
+        <div class="pool-card">
+          <div class="pool-label">
+            <span class="en">🎯 Daily Pool — Free + AirGoal+</span>
+            <span class="fr" style="display:none">🎯 Pool Daily — Free + AirGoal+</span>
+          </div>
+          <div class="pool-amount">66,600 $AIRGL</div>
+          <div class="pool-sub">
+            <span class="en">+3 pts correct result (V/N/D)</span>
+            <span class="fr" style="display:none">+3 pts résultat correct (V/N/D)</span>
+          </div>
+        </div>
+        <div class="pool-card premium">
+          <div class="pool-label">
+            <span class="en">⭐ General Pool — AirGoal+ only</span>
+            <span class="fr" style="display:none">⭐ Pool Général — AirGoal+ uniquement</span>
+          </div>
+          <div class="pool-amount">2,302,600 $AIRGL</div>
+          <div class="pool-sub">
+            <span class="en">+3 result · +5 exact score · +2 scorer (max 10 pts/match)</span>
+            <span class="fr" style="display:none">+3 résultat · +5 score exact · +2 buteur (max 10 pts/match)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div style="overflow-x:auto;">
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th><span class="en">Rank</span><span class="fr" style="display:none">Rang</span></th>
+              <th>Wallet</th>
+              <th>Type</th>
+              <th><span class="en">Points</span><span class="fr" style="display:none">Points</span></th>
+              <th><span class="en">Predictions</span><span class="fr" style="display:none">Pronos</span></th>
+              <th><span class="en">Correct</span><span class="fr" style="display:none">Corrects</span></th>
+              <th><span class="en">Exact Scores</span><span class="fr" style="display:none">Scores Exacts</span></th>
+              <th><span class="en">Scorers</span><span class="fr" style="display:none">Buteurs</span></th>
+            </tr>
+          </thead>
+          <tbody id="lbTableBody">
+            <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">
+              <span class="en">Click Refresh to load</span>
+              <span class="fr" style="display:none">Cliquez sur Rafraîchir pour charger</span>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- end tab-content-leaderboard -->
+
   </div>
 </div>
 
@@ -154,7 +264,7 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── CHANGE THIS PASSWORD ──
-const ADMIN_PASSWORD = 'SbataVoltron999@@@';
+const ADMIN_PASSWORD = 'airgoal2026';
 
 let allMatches = [];
 let currentFilter = 'all';
@@ -335,18 +445,33 @@ async function calcPoints(matchId) {
     if (pts > 0) {
       // Update leaderboard
       const { data: lb } = await db.from('leaderboard').select('*').eq('wallet', pred.wallet).single();
+      const correctResult = pred.result === actualResult ? 1 : 0;
+      const exactScore = (pred.is_premium && pred.home_score === match.home_score && pred.away_score === match.away_score) ? 1 : 0;
+      const correctScorer = (() => {
+        if (!pred.is_premium || !match.top_scorer || !pred.top_scorer) return 0;
+        const normalize = s => s.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const list = match.top_scorer.split(',').map(s => normalize(s));
+        return list.some(s => s === normalize(pred.top_scorer)) ? 1 : 0;
+      })();
+
       if (lb) {
         await db.from('leaderboard').update({
           total_points: (lb.total_points || 0) + pts,
-          correct_results: (lb.correct_results || 0) + (pred.result === actualResult ? 1 : 0),
-          total_predictions: (lb.total_predictions || 0)
+          correct_results: (lb.correct_results || 0) + correctResult,
+          total_predictions: (lb.total_predictions || 0) + 1,
+          exact_scores: (lb.exact_scores || 0) + exactScore,
+          correct_scorers: (lb.correct_scorers || 0) + correctScorer,
+          is_premium: pred.is_premium || lb.is_premium || false
         }).eq('wallet', pred.wallet);
       } else {
         await db.from('leaderboard').insert({
           wallet: pred.wallet,
           total_points: pts,
-          correct_results: pred.result === actualResult ? 1 : 0,
-          total_predictions: 1
+          correct_results: correctResult,
+          total_predictions: 1,
+          exact_scores: exactScore,
+          correct_scorers: correctScorer,
+          is_premium: pred.is_premium || false
         });
       }
     }
@@ -355,6 +480,57 @@ async function calcPoints(matchId) {
 
   showToast(`🏆 Points calculated for ${processed} predictions!`, 'success');
   if (btn) { btn.disabled = false; btn.textContent = '🏆 Recalculate Points'; }
+}
+
+
+// ═══ TABS ═══
+function switchTab(tab) {
+  document.getElementById('tab-content-matches').style.display = tab === 'matches' ? 'block' : 'none';
+  document.getElementById('tab-content-leaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
+  document.getElementById('tab-matches').classList.toggle('active', tab === 'matches');
+  document.getElementById('tab-leaderboard').classList.toggle('active', tab === 'leaderboard');
+  if (tab === 'leaderboard') loadLeaderboard();
+}
+
+// ═══ LEADERBOARD ═══
+async function loadLeaderboard() {
+  const tbody = document.getElementById('lbTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">Loading...</td></tr>';
+
+  const { data, error } = await db.from('leaderboard').select('*').order('total_points', { ascending: false });
+  if (error || !data) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--danger);padding:32px">Error loading leaderboard</td></tr>';
+    return;
+  }
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">No data yet</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((p, i) => {
+    const rank = i + 1;
+    const rankClass = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
+    const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+    const wallet = p.wallet ? `${p.wallet.slice(0,4)}...${p.wallet.slice(-4)}` : '—';
+    const isPremium = p.is_premium;
+    const typeEl = isPremium
+      ? '<span class="lb-type-premium">⭐ AirGoal+</span>'
+      : '<span class="lb-type-free">Free</span>';
+    return `
+      <tr class="${isPremium ? 'lb-row-premium' : ''}">
+        <td><span class="lb-rank ${rankClass}">${rankIcon}</span></td>
+        <td><span class="lb-wallet">${wallet}</span></td>
+        <td>${typeEl}</td>
+        <td><span class="lb-pts">${p.total_points || 0}</span></td>
+        <td>${p.total_predictions || 0}</td>
+        <td>${p.correct_results || 0}</td>
+        <td>${p.exact_scores || 0}</td>
+        <td>${p.correct_scorers || 0}</td>
+      </tr>
+    `;
+  }).join('');
 }
 
 // ═══ TOAST ═══
