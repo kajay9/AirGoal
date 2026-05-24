@@ -154,6 +154,9 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
       <button class="tab-btn" id="tab-leaderboard" onclick="switchTab('leaderboard')">
         🏆 <span class="en">Leaderboard</span><span class="fr" style="display:none">Classement</span>
       </button>
+      <button class="tab-btn" id="tab-tournament" onclick="switchTab('tournament')">
+        🌍 <span class="en">Tournament</span><span class="fr" style="display:none">Tournoi</span>
+      </button>
     </div>
 
     <!-- MATCHES TAB -->
@@ -251,6 +254,97 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
         </table>
       </div>
     </div><!-- end tab-content-leaderboard -->
+
+    <!-- TOURNAMENT TAB -->
+    <div id="tab-content-tournament" style="display:none">
+      <div class="page-title" style="margin-bottom:8px">
+        <span class="en">🌍 Tournament Results</span>
+        <span class="fr" style="display:none">🌍 Résultats du Tournoi</span>
+      </div>
+      <div class="page-sub">
+        <span class="en">Enter the final results to distribute 100,000 $AIRGL in rewards</span>
+        <span class="fr" style="display:none">Entrez les résultats finaux pour distribuer 100 000 $AIRGL de récompenses</span>
+      </div>
+
+      <!-- Rewards reminder -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:1.5rem 0;">
+        <div class="stat-card" style="border-top:2px solid var(--warning)">
+          <div class="stat-num" style="color:var(--warning)">50,000</div>
+          <div class="stat-label">$AIRGL — <span class="en">Winner</span><span class="fr" style="display:none">Vainqueur</span></div>
+        </div>
+        <div class="stat-card" style="border-top:2px solid var(--blue)">
+          <div class="stat-num">30,000</div>
+          <div class="stat-label">$AIRGL — Top Scorer</div>
+        </div>
+        <div class="stat-card" style="border-top:2px solid var(--success)">
+          <div class="stat-num" style="color:var(--success)">20,000</div>
+          <div class="stat-label">$AIRGL — <span class="en">Finalist</span><span class="fr" style="display:none">Finaliste</span></div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:600px;">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px">
+              🏆 <span class="en">Tournament Winner</span><span class="fr" style="display:none">Vainqueur du Tournoi</span>
+            </label>
+            <select id="trn_winner" class="score-input" style="width:100%;text-align:left;font-size:14px;padding:10px;">
+              <option value=""><span class="en">-- Select team --</span></option>
+              <option>Algeria</option><option>Argentina</option><option>Australia</option><option>Austria</option>
+              <option>Belgium</option><option>Bosnia-Herzegovina</option><option>Brazil</option><option>Canada</option>
+              <option>Cape Verde</option><option>Colombia</option><option>Croatia</option><option>Curacao</option>
+              <option>Czechia</option><option>DR Congo</option><option>Ecuador</option><option>Egypt</option>
+              <option>England</option><option>France</option><option>Germany</option><option>Ghana</option>
+              <option>Haiti</option><option>Iran</option><option>Iraq</option><option>Ivory Coast</option>
+              <option>Japan</option><option>Jordan</option><option>Mexico</option><option>Morocco</option>
+              <option>Netherlands</option><option>New Zealand</option><option>Norway</option><option>Panama</option>
+              <option>Paraguay</option><option>Portugal</option><option>Qatar</option><option>Saudi Arabia</option>
+              <option>Scotland</option><option>Senegal</option><option>South Africa</option><option>South Korea</option>
+              <option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Tunisia</option>
+              <option>Turkey</option><option>Uruguay</option><option>USA</option><option>Uzbekistan</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px">
+              🥈 <span class="en">Finalist</span><span class="fr" style="display:none">Finaliste</span>
+            </label>
+            <select id="trn_finalist" class="score-input" style="width:100%;text-align:left;font-size:14px;padding:10px;">
+              <option value=""><span class="en">-- Select team --</span></option>
+              <option>Algeria</option><option>Argentina</option><option>Australia</option><option>Austria</option>
+              <option>Belgium</option><option>Bosnia-Herzegovina</option><option>Brazil</option><option>Canada</option>
+              <option>Cape Verde</option><option>Colombia</option><option>Croatia</option><option>Curacao</option>
+              <option>Czechia</option><option>DR Congo</option><option>Ecuador</option><option>Egypt</option>
+              <option>England</option><option>France</option><option>Germany</option><option>Ghana</option>
+              <option>Haiti</option><option>Iran</option><option>Iraq</option><option>Ivory Coast</option>
+              <option>Japan</option><option>Jordan</option><option>Mexico</option><option>Morocco</option>
+              <option>Netherlands</option><option>New Zealand</option><option>Norway</option><option>Panama</option>
+              <option>Paraguay</option><option>Portugal</option><option>Qatar</option><option>Saudi Arabia</option>
+              <option>Scotland</option><option>Senegal</option><option>South Africa</option><option>South Korea</option>
+              <option>Spain</option><option>Sweden</option><option>Switzerland</option><option>Tunisia</option>
+              <option>Turkey</option><option>Uruguay</option><option>USA</option><option>Uzbekistan</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px">
+              ⚽ Top Scorer
+            </label>
+            <input type="text" id="trn_scorer" class="scorer-input" style="width:100%" placeholder="Ex: Mbappé, Haaland..."/>
+          </div>
+
+          <button class="btn-validate" style="width:100%;padding:12px;" onclick="saveTournamentResults()">
+            <span class="en">✔ Validate & Calculate Rewards</span>
+            <span class="fr" style="display:none">✔ Valider & Calculer les Récompenses</span>
+          </button>
+
+          <!-- Current results display -->
+          <div id="trnCurrentResults" style="font-size:12px;color:var(--muted);margin-top:4px;"></div>
+        </div>
+      </div>
+    </div><!-- end tab-content-tournament -->
 
   </div>
 </div>
@@ -485,11 +579,13 @@ async function calcPoints(matchId) {
 
 // ═══ TABS ═══
 function switchTab(tab) {
-  document.getElementById('tab-content-matches').style.display = tab === 'matches' ? 'block' : 'none';
-  document.getElementById('tab-content-leaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
-  document.getElementById('tab-matches').classList.toggle('active', tab === 'matches');
-  document.getElementById('tab-leaderboard').classList.toggle('active', tab === 'leaderboard');
+  ['matches','leaderboard','tournament'].forEach(t => {
+    document.getElementById('tab-content-' + t).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
   if (tab === 'leaderboard') loadLeaderboard();
+  if (tab === 'tournament') loadTournamentResults();
 }
 
 // ═══ LEADERBOARD ═══
@@ -531,6 +627,67 @@ async function loadLeaderboard() {
       </tr>
     `;
   }).join('');
+}
+
+
+// ═══ TOURNAMENT RESULTS ═══
+async function loadTournamentResults() {
+  const { data } = await db.from('tournament_results').select('*').single().catch(() => ({ data: null }));
+  const el = document.getElementById('trnCurrentResults');
+  if (!el) return;
+  if (data) {
+    document.getElementById('trn_winner').value = data.winner || '';
+    document.getElementById('trn_finalist').value = data.finalist || '';
+    document.getElementById('trn_scorer').value = data.top_scorer || '';
+    el.innerHTML = `✅ <span style="color:var(--success)">Saved: ${data.winner || '?'} won · Finalist: ${data.finalist || '?'} · Scorer: ${data.top_scorer || '?'}</span>`;
+  }
+}
+
+async function saveTournamentResults() {
+  const winner = document.getElementById('trn_winner').value;
+  const finalist = document.getElementById('trn_finalist').value;
+  const scorer = document.getElementById('trn_scorer').value.trim();
+
+  if (!winner || !finalist || !scorer) {
+    showToast('Please fill all 3 fields', 'error');
+    return;
+  }
+
+  const normalize = s => s.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // Save results
+  const { error } = await db.from('tournament_results').upsert({
+    id: 1, winner, finalist, top_scorer: scorer, updated_at: new Date().toISOString()
+  });
+  if (error) { showToast('Error saving results', 'error'); return; }
+
+  // Get all tournament predictions
+  const { data: preds } = await db.from('tournament_predictions').select('*');
+  if (!preds || !preds.length) {
+    showToast('✅ Results saved — no predictions to calculate yet', 'success');
+    return;
+  }
+
+  let processed = 0;
+  for (const pred of preds) {
+    let pts = 0;
+    if (pred.winner === winner) pts += 50000;
+    if (pred.finalist === finalist) pts += 20000;
+    if (pred.top_scorer && normalize(pred.top_scorer) === normalize(scorer)) pts += 30000;
+
+    if (pts > 0) {
+      const { data: lb } = await db.from('leaderboard').select('*').eq('wallet', pred.wallet).single().catch(() => ({ data: null }));
+      if (lb) {
+        await db.from('leaderboard').update({ total_points: (lb.total_points || 0) + pts }).eq('wallet', pred.wallet);
+      } else {
+        await db.from('leaderboard').insert({ wallet: pred.wallet, total_points: pts, is_premium: true });
+      }
+    }
+    processed++;
+  }
+
+  showToast(`🏆 Tournament rewards calculated for ${processed} predictions!`, 'success');
+  loadTournamentResults();
 }
 
 // ═══ TOAST ═══
