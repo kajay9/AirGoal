@@ -797,12 +797,21 @@ function isTournamentOpen() {
 
 async function loadTournamentPrediction() {
   if (!walletAddress) return;
+
+  // Forcer l'affichage de la section
   const section = document.getElementById('tournamentSection');
   if (section) section.style.display = 'block';
 
-  const { data } = await db.from('tournament_predictions').select('*').eq('wallet', walletAddress).single().catch(() => ({ data: null }));
-  tournamentPred = data;
-  renderTournamentForm();
+  // Charger les données existantes
+  try {
+    const { data } = await db.from('tournament_predictions').select('*').eq('wallet', walletAddress).single();
+    tournamentPred = data || null;
+  } catch(e) {
+    tournamentPred = null;
+  }
+
+  // Attendre que le DOM soit prêt puis rendre
+  setTimeout(() => renderTournamentForm(), 50);
 }
 
 function renderTournamentForm() {
