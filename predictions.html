@@ -415,6 +415,8 @@ async function onWalletConnected() {
   if (isPremium) {
     document.getElementById('premiumBadge').style.display = 'inline';
     document.getElementById('premiumStats').style.display = 'block';
+    const section = document.getElementById('tournamentSection');
+    if (section) section.style.display = 'block';
   }
   await loadData();
 }
