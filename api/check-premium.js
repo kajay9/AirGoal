@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const { wallet } = req.body;
   if (!wallet) return res.status(400).json({ error: 'Missing wallet' });
 
-  const AIRGL_MINT = 'DSKtJFnCnBMTMKEoTBLHpP9bSJqxiWMCiRGJfEDveE7V';
+  const AIRGL_MINT = 'DSKtJFsrGycfuuEJFgsxpPrME1vrT4LfaAgTyDyeE7Vf';
 
   try {
     // 1. Récupérer les tokens
