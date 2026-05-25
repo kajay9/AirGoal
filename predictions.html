@@ -50,33 +50,6 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
 .page-title span { color: var(--green); }
 .page-sub { font-size: 14px; color: var(--muted); }
 
-/* MAIN NAV TABS */
-.main-nav { display: flex; gap: 4px; padding: 0 1.5rem; max-width: 1100px; margin: 1rem auto 0; border-bottom: 1px solid var(--border); }
-.main-nav-btn { padding: 10px 24px; font-size: 14px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; transition: all 0.15s; }
-.main-nav-btn.active { color: var(--green); border-bottom-color: var(--green); }
-.main-nav-btn:hover { color: var(--white); }
-
-/* LEADERBOARD PUBLIC */
-.lb-nav { display: flex; gap: 4px; background: var(--bg2); padding: 4px; border-radius: 10px; width: fit-content; margin-bottom: 1.5rem; }
-.lb-nav-btn { background: transparent; border: none; color: var(--muted); padding: 7px 18px; border-radius: 7px; font-weight: 700; font-size: 13px; cursor: pointer; }
-.lb-nav-btn.active { background: var(--green); color: var(--bg); }
-.lb-table-wrap { overflow-x: auto; }
-.lb-pub-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.lb-pub-table th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
-.lb-pub-table td { padding: 10px 12px; border-bottom: 1px solid rgba(30,41,59,0.5); }
-.lb-pub-table tr.my-row td { background: rgba(0,168,255,0.08); border-left: 3px solid var(--green); }
-.lb-pub-table tr:hover td { background: rgba(15,23,42,0.5); }
-.lb-rank-num { font-weight: 900; color: var(--muted); font-size: 14px; }
-.lb-rank-num.r1 { color: #ffd700; }
-.lb-rank-num.r2 { color: #c0c0c0; }
-.lb-rank-num.r3 { color: #cd7f32; }
-.lb-wallet-short { font-family: monospace; font-size: 12px; }
-.lb-free-badge { background: rgba(100,116,139,0.15); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-.lb-premium-badge { background: rgba(0,168,255,0.15); color: var(--blue); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; border: 1px solid rgba(0,168,255,0.3); }
-.lb-pts-val { font-weight: 900; color: var(--white); }
-.lb-my-rank { background: rgba(0,168,255,0.08); border: 1px solid rgba(0,168,255,0.2); border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem; font-size: 13px; display: none; }
-.lb-my-rank.visible { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
 .tabs { display: flex; gap: 4px; padding: 0 1.5rem; max-width: 1100px; margin: 1rem auto 0; border-bottom: 1px solid var(--border); overflow-x: auto; }
 .tab { padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; }
 .tab.active { color: var(--green); border-bottom-color: var(--green); }
@@ -348,80 +321,16 @@ body { background: var(--bg); color: var(--white); font-family: -apple-system, B
     </div>
   </div>
 
-  <!-- MAIN NAV -->
-  <div class="main-nav">
-    <button class="main-nav-btn active" id="navPronos" onclick="switchMainTab('pronos')">
-      ⚽ <span class="en">Predictions</span><span class="fr" style="display:none">Pronostics</span>
-    </button>
-    <button class="main-nav-btn" id="navLeaderboard" onclick="switchMainTab('leaderboard')">
-      🏆 Leaderboard
-    </button>
-  </div>
+  <div class="tabs" id="groupTabs"></div>
 
-  <!-- PRONOS TAB -->
-  <div id="mainTabPronos">
-    <div class="tabs" id="groupTabs"></div>
-    <div class="main">
-      <div class="match-grid" id="matchGrid">
+  <div class="main">
+    <div class="match-grid" id="matchGrid">
       <div class="loading">
         <span class="en">Loading matches...</span>
         <span class="fr" style="display:none">Chargement des matchs...</span>
       </div>
     </div>
-    </div>
   </div>
-
-  <!-- LEADERBOARD TAB -->
-  <div id="mainTabLeaderboard" style="display:none">
-    <div class="main" style="padding-top:1.5rem">
-      <!-- My rank -->
-      <div class="lb-my-rank" id="myRankBanner"></div>
-
-      <!-- Sub tabs -->
-      <div class="lb-nav">
-        <button class="lb-nav-btn active" id="lbNavDaily" onclick="switchLbTab('daily')">
-          🎯 Daily
-        </button>
-        <button class="lb-nav-btn" id="lbNavGlobal" onclick="switchLbTab('global')">
-          ⭐ Global (AirGoal+)
-        </button>
-      </div>
-
-      <!-- Daily leaderboard -->
-      <div id="lbDaily">
-        <div class="lb-table-wrap">
-          <table class="lb-pub-table">
-            <thead>
-              <tr>
-                <th><span class="en">Rank</span><span class="fr" style="display:none">Rang</span></th>
-                <th>Wallet</th>
-                <th>Type</th>
-                <th><span class="en">Points</span><span class="fr" style="display:none">Points</span></th>
-              </tr>
-            </thead>
-            <tbody id="lbDailyBody"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Global leaderboard -->
-      <div id="lbGlobal" style="display:none">
-        <div class="lb-table-wrap">
-          <table class="lb-pub-table">
-            <thead>
-              <tr>
-                <th><span class="en">Rank</span><span class="fr" style="display:none">Rang</span></th>
-                <th>Wallet</th>
-                <th><span class="en">Points</span><span class="fr" style="display:none">Points</span></th>
-              </tr>
-            </thead>
-            <tbody id="lbGlobalBody"><tr><td colspan="3" style="text-align:center;color:var(--muted);padding:32px">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script>
@@ -487,6 +396,46 @@ async function onWalletConnected() {
   document.getElementById('btnConnect').style.display = 'none';
   document.getElementById('btnDisconnect').style.display = 'block';
   document.getElementById('walletAddr').textContent = walletAddress.slice(0,4) + '...' + walletAddress.slice(-4);
+
+  // Vérifier le solde $AIRGL via Helius RPC
+  try {
+    const AIRGL_MINT = 'DSKtJFnCnBMTMKEoTBLHpP9bSJqxiWMCiRGJfEDveE7V';
+    const resp = await fetch('https://mainnet.helius-rpc.com/?api-key=demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0', id: 1,
+        method: 'getTokenAccountsByOwner',
+        params: [walletAddress, { mint: AIRGL_MINT }, { encoding: 'jsonParsed' }]
+      })
+    });
+    const data = await resp.json();
+    const accounts = data?.result?.value || [];
+    let totalTokens = 0;
+    accounts.forEach(acc => {
+      const amount = acc?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+      totalTokens += amount;
+    });
+
+    // Récupérer le prix SOL pour calculer la valeur en USD
+    const priceResp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+    const priceData = await priceResp.json();
+    const solPrice = priceData?.solana?.usd || 85;
+
+    // Récupérer le prix du token depuis Raydium/Jupiter
+    const tokenPriceResp = await fetch(`https://price.jup.ag/v6/price?ids=${AIRGL_MINT}`);
+    const tokenPriceData = await tokenPriceResp.json();
+    const tokenPriceUsd = tokenPriceData?.data?.[AIRGL_MINT]?.price || 0;
+
+    const usdValue = totalTokens * tokenPriceUsd;
+    isPremium = usdValue >= 10;
+
+    console.log(`AIRGL tokens: ${totalTokens}, USD value: $${usdValue.toFixed(2)}, Premium: ${isPremium}`);
+  } catch(e) {
+    console.warn('Premium check failed:', e);
+    isPremium = false;
+  }
+
   if (isPremium) {
     document.getElementById('premiumBadge').style.display = 'inline';
     document.getElementById('premiumStats').style.display = 'block';
@@ -981,103 +930,6 @@ async function saveTournamentPrediction() {
   tournamentPred = payload;
   showToast(isFr ? '✅ Pronostics sauvegardés !' : '✅ Predictions saved!', 'success');
   renderTournamentForm();
-}
-
-
-// ═══════════════════════════════════════════
-// MAIN TAB NAVIGATION
-// ═══════════════════════════════════════════
-let currentLbTab = 'daily';
-
-function switchMainTab(tab) {
-  document.getElementById('mainTabPronos').style.display = tab === 'pronos' ? 'block' : 'none';
-  document.getElementById('mainTabLeaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
-  document.getElementById('navPronos').classList.toggle('active', tab === 'pronos');
-  document.getElementById('navLeaderboard').classList.toggle('active', tab === 'leaderboard');
-  if (tab === 'leaderboard') loadPublicLeaderboard();
-}
-
-function switchLbTab(tab) {
-  currentLbTab = tab;
-  document.getElementById('lbDaily').style.display = tab === 'daily' ? 'block' : 'none';
-  document.getElementById('lbGlobal').style.display = tab === 'global' ? 'block' : 'none';
-  document.getElementById('lbNavDaily').classList.toggle('active', tab === 'daily');
-  document.getElementById('lbNavGlobal').classList.toggle('active', tab === 'global');
-}
-
-// ═══════════════════════════════════════════
-// PUBLIC LEADERBOARD
-// ═══════════════════════════════════════════
-async function loadPublicLeaderboard() {
-  const isFr = currentLang === 'fr';
-
-  const { data } = await db.from('leaderboard').select('*').order('total_points', { ascending: false });
-  if (!data) return;
-
-  const shortWallet = w => w ? `${w.slice(0,4)}...${w.slice(-4)}` : '—';
-
-  // My rank banner
-  const banner = document.getElementById('myRankBanner');
-  if (walletAddress && banner) {
-    const myIdx = data.findIndex(p => p.wallet === walletAddress);
-    if (myIdx >= 0) {
-      const me = data[myIdx];
-      banner.className = 'lb-my-rank visible';
-      banner.innerHTML = `
-        <div style="font-size:22px">🎯</div>
-        <div>
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">${isFr ? 'Ton classement' : 'Your rank'}</div>
-          <div style="font-size:18px;font-weight:900;color:var(--white)">#${myIdx + 1} <span style="font-size:13px;color:var(--green)">${me.total_points || 0} pts</span></div>
-        </div>
-        <div style="margin-left:auto;font-size:12px;color:var(--muted)">${shortWallet(walletAddress)}</div>
-      `;
-    }
-  }
-
-  // Daily (tous les joueurs)
-  const dailyBody = document.getElementById('lbDailyBody');
-  if (dailyBody) {
-    if (!data.length) {
-      dailyBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:32px">${isFr ? 'Pas encore de données' : 'No data yet'}</td></tr>`;
-    } else {
-      dailyBody.innerHTML = data.map((p, i) => {
-        const rank = i + 1;
-        const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
-        const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        const isMe = p.wallet === walletAddress;
-        const typeEl = p.is_premium
-          ? '<span class="lb-premium-badge">⭐ AirGoal+</span>'
-          : '<span class="lb-free-badge">Free</span>';
-        return `<tr class="${isMe ? 'my-row' : ''}">
-          <td><span class="lb-rank-num ${rankClass}">${rankIcon}</span></td>
-          <td><span class="lb-wallet-short">${shortWallet(p.wallet)}${isMe ? ' <span style="color:var(--green);font-size:10px">(${isFr ? "Toi" : "You"})</span>' : ''}</span></td>
-          <td>${typeEl}</td>
-          <td><span class="lb-pts-val">${p.total_points || 0}</span></td>
-        </tr>`;
-      }).join('');
-    }
-  }
-
-  // Global (AirGoal+ uniquement)
-  const premiumData = data.filter(p => p.is_premium);
-  const globalBody = document.getElementById('lbGlobalBody');
-  if (globalBody) {
-    if (!premiumData.length) {
-      globalBody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:32px">${isFr ? 'Pas encore de données AirGoal+' : 'No AirGoal+ data yet'}</td></tr>`;
-    } else {
-      globalBody.innerHTML = premiumData.map((p, i) => {
-        const rank = i + 1;
-        const rankClass = rank === 1 ? 'r1' : rank === 2 ? 'r2' : rank === 3 ? 'r3' : '';
-        const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        const isMe = p.wallet === walletAddress;
-        return `<tr class="${isMe ? 'my-row' : ''}">
-          <td><span class="lb-rank-num ${rankClass}">${rankIcon}</span></td>
-          <td><span class="lb-wallet-short">${shortWallet(p.wallet)}${isMe ? ' <span style="color:var(--green);font-size:10px">(${isFr ? "Toi" : "You"})</span>' : ''}</span></td>
-          <td><span class="lb-pts-val">${p.total_points || 0}</span></td>
-        </tr>`;
-      }).join('');
-    }
-  }
 }
 
 // ═══════════════════════════════════════════
