@@ -446,7 +446,7 @@ async function loadData() {
     buildTabs();
     renderMatches(currentGroup);
     initDailyDrop();
-    if (isPremium) await loadTournamentPrediction();
+    if (isPremium) setTimeout(() => loadTournamentPrediction(), 100);
   } catch(err) {
     showToast(currentLang === 'fr' ? 'Erreur de chargement' : 'Error loading data', 'error');
   }
