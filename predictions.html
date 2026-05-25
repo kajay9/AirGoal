@@ -397,47 +397,16 @@ async function onWalletConnected() {
   document.getElementById('btnDisconnect').style.display = 'block';
   document.getElementById('walletAddr').textContent = walletAddress.slice(0,4) + '...' + walletAddress.slice(-4);
 
-  // Vérifier le solde $AIRGL
+  // Vérifier le solde $AIRGL via API Vercel
   try {
-    const AIRGL_MINT = 'DSKtJFnCnBMTMKEoTBLHpP9bSJqxiWMCiRGJfEDveE7V';
-
-    // Récupérer les tokens via Solana public RPC
-    const resp = await fetch('https://api.mainnet-beta.solana.com', {
+    const resp = await fetch('/api/check-premium', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0', id: 1,
-        method: 'getTokenAccountsByOwner',
-        params: [walletAddress, { mint: AIRGL_MINT }, { encoding: 'jsonParsed' }]
-      })
+      body: JSON.stringify({ wallet: walletAddress })
     });
     const data = await resp.json();
-    const accounts = data?.result?.value || [];
-    let totalTokens = 0;
-    accounts.forEach(acc => {
-      const amount = acc?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
-      totalTokens += amount;
-    });
-
-    // Récupérer le prix du token via Jupiter v4
-    let tokenPriceUsd = 0;
-    try {
-      const tokenPriceResp = await fetch(`https://price.jup.ag/v4/price?ids=${AIRGL_MINT}`);
-      const tokenPriceData = await tokenPriceResp.json();
-      tokenPriceUsd = tokenPriceData?.data?.[AIRGL_MINT]?.price || 0;
-    } catch(e2) {
-      // Si Jupiter échoue, essayer DexScreener
-      try {
-        const dsResp = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${AIRGL_MINT}`);
-        const dsData = await dsResp.json();
-        tokenPriceUsd = parseFloat(dsData?.pairs?.[0]?.priceUsd || 0);
-      } catch(e3) { tokenPriceUsd = 0; }
-    }
-
-    const usdValue = totalTokens * tokenPriceUsd;
-    isPremium = usdValue >= 10;
-
-    console.log(`AIRGL tokens: ${totalTokens}, price: $${tokenPriceUsd}, USD value: $${usdValue.toFixed(2)}, Premium: ${isPremium}`);
+    isPremium = data.isPremium || false;
+    console.log(`AIRGL: ${data.totalTokens} tokens, $${data.usdValue?.toFixed(2)}, Premium: ${isPremium}`);
   } catch(e) {
     console.warn('Premium check failed:', e);
     isPremium = false;
