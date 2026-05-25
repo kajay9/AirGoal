@@ -397,10 +397,12 @@ async function onWalletConnected() {
   document.getElementById('btnDisconnect').style.display = 'block';
   document.getElementById('walletAddr').textContent = walletAddress.slice(0,4) + '...' + walletAddress.slice(-4);
 
-  // Vérifier le solde $AIRGL via Helius RPC
+  // Vérifier le solde $AIRGL
   try {
     const AIRGL_MINT = 'DSKtJFnCnBMTMKEoTBLHpP9bSJqxiWMCiRGJfEDveE7V';
-    const resp = await fetch('https://mainnet.helius-rpc.com/?api-key=demo', {
+
+    // Récupérer les tokens via Solana public RPC
+    const resp = await fetch('https://api.mainnet-beta.solana.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -417,20 +419,25 @@ async function onWalletConnected() {
       totalTokens += amount;
     });
 
-    // Récupérer le prix SOL pour calculer la valeur en USD
-    const priceResp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-    const priceData = await priceResp.json();
-    const solPrice = priceData?.solana?.usd || 85;
-
-    // Récupérer le prix du token depuis Raydium/Jupiter
-    const tokenPriceResp = await fetch(`https://price.jup.ag/v6/price?ids=${AIRGL_MINT}`);
-    const tokenPriceData = await tokenPriceResp.json();
-    const tokenPriceUsd = tokenPriceData?.data?.[AIRGL_MINT]?.price || 0;
+    // Récupérer le prix du token via Jupiter v4
+    let tokenPriceUsd = 0;
+    try {
+      const tokenPriceResp = await fetch(`https://price.jup.ag/v4/price?ids=${AIRGL_MINT}`);
+      const tokenPriceData = await tokenPriceResp.json();
+      tokenPriceUsd = tokenPriceData?.data?.[AIRGL_MINT]?.price || 0;
+    } catch(e2) {
+      // Si Jupiter échoue, essayer DexScreener
+      try {
+        const dsResp = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${AIRGL_MINT}`);
+        const dsData = await dsResp.json();
+        tokenPriceUsd = parseFloat(dsData?.pairs?.[0]?.priceUsd || 0);
+      } catch(e3) { tokenPriceUsd = 0; }
+    }
 
     const usdValue = totalTokens * tokenPriceUsd;
     isPremium = usdValue >= 10;
 
-    console.log(`AIRGL tokens: ${totalTokens}, USD value: $${usdValue.toFixed(2)}, Premium: ${isPremium}`);
+    console.log(`AIRGL tokens: ${totalTokens}, price: $${tokenPriceUsd}, USD value: $${usdValue.toFixed(2)}, Premium: ${isPremium}`);
   } catch(e) {
     console.warn('Premium check failed:', e);
     isPremium = false;
